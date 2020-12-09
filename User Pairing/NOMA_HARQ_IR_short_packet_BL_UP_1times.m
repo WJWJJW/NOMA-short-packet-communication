@@ -26,6 +26,7 @@ user_distance = sort(user_distance);
 
 RP_user_pairing = zeros(K,2);
 User_pre_grouping = zeros(K,2);
+Timer = zeros(2, length(Pt));
 
 for u=1:length(Pt)
     %% Random Paring (RP)
@@ -50,7 +51,7 @@ for u=1:length(Pt)
     [sum_UPG_opt_M(u), UPG_opt_M(:,u)] = M_cal(N1, User_pre_grouping(:,:,u), K,...
                                         eplsion1R,eplsion2R,rho(u),N,eta);
     
-    
+    tic;
     %% Hill Climbing Pairing
     % RP and calculate blocklength as current optimum blocklength
     [sum_HCP_opt_M(u), HCP_opt_M(:,u)] = M_cal(N1, RP_user_pairing(:,:,u), K,...
@@ -82,19 +83,22 @@ for u=1:length(Pt)
             sum_HCP_opt_M (u) = sum_nei_opt_M;
             HCP_opt_M(:,u) = nei_opt_M;
             cur_combinition = neighbor;
-            u
         else
             break;
         end
         
             
     end % End HCP
+    toc;
+    Timer(1,u) = toc;
     
+    tic;
     %% Simulated Annealing Pairing
     % Initialization
-    Temperature
-    annealing_factor 
-    Time_budget
+    Temperature = 20;
+    Temperature_min = 0.1;
+    annealing_factor = 0.7; 
+    Time_budget = 50;
     cur_time = 0;
     % RP and calculate blocklength as current optimum blocklength
     [sum_SAP_opt_M(u), SAP_opt_M(:,u)] = M_cal(N1, RP_user_pairing(:,:,u), K,...
@@ -110,35 +114,42 @@ for u=1:length(Pt)
         end
         % Find neighbor
         [neighbor_1, neighbor_2] = neighbor_finder(cur_combinition, K);
-        [sum_nei1_opt_M, nei1_opt_M(:,u)] = M_cal(N1, neighbor_1, K,...
-                                        eplsion1R,eplsion2R,rho(u),N,eta);
-        [sum_nei2_opt_M, nei2_opt_M(:,u)] = M_cal(N1, neighbor_2, K,...
-                                        eplsion1R,eplsion2R,rho(u),N,eta);
-        
-        % Find the best neighbor
-        if sum_nei1_opt_M < sum_nei2_opt_M
-            sum_nei_opt_M = sum_nei1_opt_M;
-            nei_opt_M = nei1_opt_M(:,u);
+        % Choose neighbor randomly
+        if randi(2) == 1
             neighbor = neighbor_1;
         else
-            sum_nei_opt_M = sum_nei2_opt_M;
-            nei_opt_M = nei2_opt_M(:,u);
             neighbor = neighbor_2;
         end
+        % Calculate blocklength for neighbor
+        [sum_nei_opt_M, nei_opt_M] = M_cal(N1, neighbor, K,...
+                                        eplsion1R,eplsion2R,rho(u),N,eta);
         
         % Find the solution for this iteration
-        if  sum_nei_opt_M <= sum_HCP_opt_M (u)
-            sum_HCP_opt_M (u) = sum_nei_opt_M;
-            HCP_opt_M(:,u) = nei_opt_M;
+        % Better solution
+        if  sum_nei_opt_M <= sum_SAP_opt_M (u)
+            sum_SAP_opt_M (u) = sum_nei_opt_M;
+            SAP_opt_M(:,u) = nei_opt_M;
             cur_combinition = neighbor;
+        % Worse solution
         else
-            delta_E = sum_HCP_opt_M (u) - sum_nei_opt_M;
+            delta_E = sum_SAP_opt_M (u) - sum_nei_opt_M;
             rn = rand(1);
+            % Accept worse solution
+            if exp(delta_E/Temperature) >= rn
+                sum_SAP_opt_M (u) = sum_nei_opt_M;
+                SAP_opt_M(:,u) = nei_opt_M;
+                cur_combinition = neighbor;
+            end           
         end
-        
+        % Annealing
+        Temperature = annealing_factor * Temperature;
+        if Temperature < Temperature_min
+            break;
+        end
             
     end % End SAP
-    
+    toc;
+    Timer(2,u) = toc;
 end
 
 figure (1)
@@ -147,7 +158,9 @@ plot(Pt, sum_RP_opt_M,'b');
 hold on; grid on;
 plot(Pt, sum_UPG_opt_M,'g');
 plot(Pt, sum_HCP_opt_M,'r');
+plot(Pt, sum_SAP_opt_M,'Color',[1 0.5 0]);
 
 
 ylabel('blocklength');
-legend('Random Pairing','User Pre-Grouping','Hill Climbing Based Pairing');
+legend('Random Pairing','User Pre-Grouping',...
+       'Hill Climbing Based Pairing', 'Simulated Anealing Based Pairing');

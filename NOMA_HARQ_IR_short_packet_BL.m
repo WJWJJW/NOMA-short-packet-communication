@@ -1,26 +1,26 @@
 clc; clear variables; close all;
 N = 1e6;
-N1 = 80;
-N2 = 80;
+N1 = 256;
+N2 = 256;
 
 
 eplsion1R = 10^-5;
 eplsion2R = 10^-4;
 
-Pt = 0;                    %Transmit Power in dBm
+Pt = -5;                    %Transmit Power in dBm
 pt = (10^-3)*db2pow(Pt);    %Transmit Power (linear scale)
 
-BW = 10^6;                  %System bandwidth
+BW = 10^7;                  %System bandwidth
 No = -174 + 10*log10(BW);   %Noise power (dBm)
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
 
-% rho = pt/ no
-rho = db2pow(90);
+rho = pt/ no
+% rho = db2pow(90);
 
 
 d1 = 10;
-d2 = 15;
+d2 = 17;
 eta = 4;
 
 % lamda1 = 1/d1^eta;
