@@ -6,7 +6,7 @@ N2 = 80;
 eplsion1R = 10^-5;
 eplsion2R = 10^-4;
 
-Pt = 10;                    %Transmit Power in dBm
+Pt = -4;                    %Transmit Power in dBm
 pt = (10^-3)*db2pow(Pt);    %Transmit Power (linear scale)
 
 BW = 10^6;                  %System bandwidth
@@ -21,8 +21,8 @@ dis_thred2 = (1.64*eplsion2R/eplsion1R)^(1/eta);
 dis_thred3 = (2*eplsion2R/eplsion1R)^(1/eta);
 
 
-d1 = 40;
-diff = 10:5:300;
+d1 = 84;
+diff = 10:2:150;
 d2 = d1+diff;
 
 syms otp_a1
@@ -38,7 +38,7 @@ for dd=1:length(diff)
     lamda2 = mean(abs(h2).^2);
     
     contraint(dd) = (lamda1*eplsion1R)/(lamda2*eplsion2R);
-    k = contraint(dd)/3;
+    k = contraint(dd)/6;
     
     % solve by matlab
 %     xo2 = (1+eplsion2R*lamda2*rho)/(1+eplsion2R*lamda2*rho*otp_a1);

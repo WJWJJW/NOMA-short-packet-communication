@@ -1,0 +1,2 @@
+function [thred1_checker, thred2_] = thred_checker(user_pairing,K,eplsion1R,eplsion2R,rho,eta)
+end

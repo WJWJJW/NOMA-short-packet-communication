@@ -8,7 +8,7 @@ N2 = NN;
 eplsion1R = 10^-5;
 eplsion2R = 10^-4;
 
-Pt = -10:1:0;                    %Transmit Power in dBm
+Pt = -10:2:0;                    %Transmit Power in dBm
 pt = (10^-3).*db2pow(Pt);    %Transmit Power (linear scale)
 
 BW = 10^6;                  %System bandwidth
@@ -33,8 +33,9 @@ for u=1:length(Pt)
     RP_indices = randperm(2*K);
     for ii=1:K
         RP_user_pairing(ii,:,u) = sort(user_distance(RP_indices(2*ii-1:2*ii)));
-        RP_user_pairing_thred_check(ii,u) = double((RP_user_pairing(ii,2,u) / RP_user_pairing(ii,1,u)) > dis_thred1);
     end
+    
+    [RP_thred1_check(:,u), RP_thred2_check(:,u)] = thred_checker(RP_user_pairing(:,:,u), K, eplsion1R, eplsion2R, rho(u), eta);
     
     % Total blocklength for random pairing
     [sum_RP_opt_M(u), RP_opt_M(:,u)] = M_cal(N1, RP_user_pairing(:,:,u), K,...
@@ -44,8 +45,9 @@ for u=1:length(Pt)
     for ii=1:K
         User_pre_grouping(ii,1,u) = user_distance(ii);
         User_pre_grouping(ii,2,u) = user_distance(K -1 + ii);
-        User_pre_grouping_thred_check(ii,u) = double((User_pre_grouping(ii,2,u) / User_pre_grouping(ii,1,u)) > dis_thred1);
     end
+    
+    [UPG_thred1_check(:,u), UPG_thred2_check(:,u)] = thred_checker(User_pre_grouping(:,:,u), K, eplsion1R, eplsion2R, rho(u), eta);
     
     % Total blocklength for User Pre-Grouping
     [sum_UPG_opt_M(u), UPG_opt_M(:,u)] = M_cal(N1, User_pre_grouping(:,:,u), K,...
@@ -148,6 +150,8 @@ for u=1:length(Pt)
         end
             
     end % End SAP
+    Simulated_Anealing_Pairing(:,:,u) = cur_combinition;
+     [SAG_thred1_check(:,u), SAG_thred2_check(:,u)] = thred_checker(Simulated_Anealing_Pairing(:,:,u), K, eplsion1R, eplsion2R, rho(u), eta);
     toc;
     Timer(2,u) = toc;
 end

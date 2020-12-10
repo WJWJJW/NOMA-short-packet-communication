@@ -7,7 +7,7 @@ N2 = 256;
 eplsion1R = 10^-5;
 eplsion2R = 10^-4;
 
-Pt = -5;                    %Transmit Power in dBm
+Pt = 0;                    %Transmit Power in dBm
 pt = (10^-3)*db2pow(Pt);    %Transmit Power (linear scale)
 
 BW = 10^7;                  %System bandwidth
@@ -19,8 +19,8 @@ rho = pt/ no
 % rho = db2pow(90);
 
 
-d1 = 10;
-d2 = 17;
+d1 = 20;
+d2 = 50;
 eta = 4;
 
 % lamda1 = 1/d1^eta;

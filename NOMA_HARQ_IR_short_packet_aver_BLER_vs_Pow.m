@@ -24,7 +24,7 @@ BW = 10^6;                  %System bandwidth
 No = -174 + 10*log10(BW);   %Noise power (dBm)
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
-alpha1 = 0.1;
+alpha1 = 0.499;
 alpha2 = 1 - alpha1;
 M = 100;
 
@@ -39,7 +39,7 @@ tau_1 = w1 + (1/(2*sqrt(M)*Xi_1));
 eta_2 = w2 - (1/(2*sqrt(M)*Xi_2));
 tau_2 = w2 + (1/(2*sqrt(M)*Xi_2));
 
-Pt = 0:70; %Transmitted power in dBm
+Pt = 0:40; %Transmitted power in dBm
 
 
 p = length(Pt);
