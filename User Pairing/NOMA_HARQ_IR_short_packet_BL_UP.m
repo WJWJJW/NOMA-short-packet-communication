@@ -21,31 +21,41 @@ RHO = pow2db(rho);
 eta = 4;
 dis_thred1 = (eplsion2R/eplsion1R)^(1/eta);
 
-RP_user_pairing = zeros(K,2);
-User_pre_grouping = zeros(K,2);
-for u=1:length(Pt)
+RP_user_pairing = zeros(K,2,u);
+User_pre_grouping = zeros(K,2,u);
+
+
+parfor u=1:length(Pt)
     for jj = 1:10
         % Generate user randomly
         user_distance = randi([10 330],1,2*K);
         user_distance = sort(user_distance);
+        
+        
         %% Random Paring (RP)
         RP_indices = randperm(2*K);
+        tmp = zeros(K,2);
         for ii=1:K
-            RP_user_pairing(ii,:,u) = sort(user_distance(RP_indices(2*ii-1:2*ii)));
+            tmp(ii,:) = sort(user_distance(RP_indices(2*ii-1:2*ii)));
 %             RP_user_pairing_thred_check(ii,u) = double((RP_user_pairing(ii,2,u) / RP_user_pairing(ii,1,u)) > dis_thred1);
         end
-
+        RP_user_pairing(:,:,u) = tmp;
         % Total blocklength for random pairing
         [sum_RP_opt_M_j(jj,u), RP_opt_M(:,u)] = M_cal(N1, RP_user_pairing(:,:,u), K,...
                                             eplsion1R,eplsion2R,rho(u),N,eta); 
+
+                                        
                                         
         %% User Pre-Grouping
+        tmp = zeros(K,2);
         for ii=1:K
-            User_pre_grouping(ii,1,u) = user_distance(ii);
-            User_pre_grouping(ii,2,u) = user_distance(K -1 + ii);
+            tmp(ii,1) = user_distance(ii);
+            tmp(ii,2) = user_distance(K -1 + ii);
 %             User_pre_grouping_thred_check(ii,u) = double((User_pre_grouping(ii,2,u) / User_pre_grouping(ii,1,u)) > dis_thred1);
         end
-
+        
+        User_pre_grouping(:,:,u) = tmp;
+        
         % Total blocklength for User Pre-Grouping
         [sum_UPG_opt_M_j(jj,u), UPG_opt_M(:,u)] = M_cal(N1, User_pre_grouping(:,:,u), K,...
                                             eplsion1R,eplsion2R,rho(u),N,eta);                          
@@ -142,9 +152,7 @@ for u=1:length(Pt)
             end
 
         end % End SAP
-                                        
-                                        
-                                        
+                                                                            
     end
 
 end
