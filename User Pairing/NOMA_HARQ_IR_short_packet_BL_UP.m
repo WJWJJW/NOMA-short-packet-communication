@@ -1,7 +1,7 @@
 clc; clear variables; close all;
 
 N = 1e6; % number of channel tap
-NNN = 10; % number of Monte Carlo
+NNN = 2; % number of Monte Carlo
 K = 5;  % number of cluster (number of user  = 2K)
 NN = 80; % number of information bit
 N1 = NN;
@@ -225,3 +225,8 @@ plot(Pt, sum_SAP_opt_M,'Color',[1 0.5 0]);
 
 ylabel('blocklength');
 legend('Random Pairing','User Pre-Grouping','Hill Climbing Based Pairing','Simulated Anealing Based Pairing');
+
+name_str = ['UP_test_' num2str(NNN) 'times.png'];
+saveas(gcf,name_str);
+
+saveas(gcf,'UP_test.png');
