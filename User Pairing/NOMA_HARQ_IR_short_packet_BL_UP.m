@@ -1,5 +1,5 @@
 clc; clear variables; close all;
-tic;
+
 N = 1e6; % number of channel tap
 NNN = 10; % number of Monte Carlo
 K = 5;  % number of cluster (number of user  = 2K)
@@ -32,14 +32,26 @@ sum_UPG_opt_M_j = zeros(NNN,length(Pt));
 sum_HCP_opt_M_j = zeros(NNN,length(Pt));
 sum_SAP_opt_M_j = zeros(NNN,length(Pt));
 
+RP_opt_M = zeros(K);
+HCP_opt_M = zeros(K);
+SAP_opt_M = zeros(K);
 
+Timer_RP = zeros(NNN,length(Pt));
+Timer_UPG = zeros(NNN,length(Pt));
+Timer_HCP = zeros(NNN,length(Pt));
+Timer_SAP = zeros(NNN,length(Pt));
+
+
+s = tic;
 parfor u=1:length(Pt)
+    h = (randn(1,N)+1i*randn(1,N));
+    lamda = mean(abs(h).^2);
     for jj = 1:NNN
         % Generate user randomly
         user_distance = randi([10 330],1,2*K);
         user_distance = sort(user_distance);
         
-        
+        a = tic;
         %% Random Paring (RP)
         RP_indices = randperm(2*K);
         tmp = zeros(K,2);
@@ -49,11 +61,12 @@ parfor u=1:length(Pt)
         end
         RP_user_pairing(:,:,u) = tmp;
         % Total blocklength for random pairing
-        [sum_RP_opt_M_j(jj,u)] = M_cal(N1, RP_user_pairing(:,:,u), K,...
-                                            eplsion1R,eplsion2R,rho(u),N,eta); 
+        [sum_RP_opt_M_j(jj,u), RP_opt_M] = M_cal(N1, RP_user_pairing(:,:,u), K,...
+                                        eplsion1R,eplsion2R,rho(u),eta,lamda); 
 
-                                        
-                                        
+        Timer_RP(jj,u) = toc(a);                               
+                         
+        b = tic;       
         %% User Pre-Grouping
         tmp = zeros(K,2);
         for ii=1:K
@@ -66,42 +79,62 @@ parfor u=1:length(Pt)
         
         % Total blocklength for User Pre-Grouping
         [sum_UPG_opt_M_j(jj,u)] = M_cal(N1, User_pre_grouping(:,:,u), K,...
-                                            eplsion1R,eplsion2R,rho(u),N,eta);                          
-                                        
+                                            eplsion1R,eplsion2R,rho(u),eta,lamda);                         
+        
+        Timer_UPG(jj,u) = toc(b);
+        
+        c = tic;
         %% Hill Climbing Pairing
         % RP and calculate blocklength as current optimum blocklength
-        [sum_HCP_opt_M_j(jj,u)] = M_cal(N1, RP_user_pairing(:,:,u), K,...
-                                        eplsion1R,eplsion2R,rho(u),N,eta);
-    
+        sum_HCP_opt_M_j(jj,u) = sum_RP_opt_M_j(jj,u);
+        HCP_opt_M = RP_opt_M;
+
         cur_combinition = RP_user_pairing(:,:,u); 
         while 1
             % find neighbor
-            [neighbor_1, neighbor_2] = neighbor_finder(cur_combinition, K);
-            [sum_nei1_opt_M] = M_cal(N1, neighbor_1, K,...
-                                            eplsion1R,eplsion2R,rho(u),N,eta);
-            [sum_nei2_opt_M] = M_cal(N1, neighbor_2, K,...
-                                            eplsion1R,eplsion2R,rho(u),N,eta);
-        
+            [neighbor_1, neighbor_2, diff_idx] = neighbor_finder(cur_combinition, K);
+            % calculate sum of non-changing pair
+            tmp_sum = sum_HCP_opt_M_j(jj,u) - HCP_opt_M(diff_idx(1)) - HCP_opt_M(diff_idx(2));
+
+            % calculate sum of changing pair
+            [sum_nei1_opt_M, nei1_opt_M] = M_cal(N1, neighbor_1, 2,...
+                                            eplsion1R,eplsion2R,rho(u),eta,lamda);
+            sum_nei1_opt_M = tmp_sum + sum_nei1_opt_M;
+
+
+            [sum_nei2_opt_M, nei2_opt_M] = M_cal(N1, neighbor_2, 2,...
+                                            eplsion1R,eplsion2R,rho(u),eta,lamda);
+            sum_nei2_opt_M = tmp_sum + sum_nei2_opt_M;
+
+
             % Find the best neighbor
             if sum_nei1_opt_M < sum_nei2_opt_M
                 sum_nei_opt_M = sum_nei1_opt_M;
+                nei_opt_M = nei1_opt_M;
                 neighbor = neighbor_1;
             else
                 sum_nei_opt_M = sum_nei2_opt_M;
+                nei_opt_M = nei2_opt_M;
                 neighbor = neighbor_2;
             end
-        
+
             % Find the solution for this iteration
 
-            if  sum_nei_opt_M <= sum_HCP_opt_M_j(jj,u)
-                sum_HCP_opt_M_j(jj,u) = sum_nei_opt_M;
-                cur_combinition = neighbor;
+            if  sum_nei_opt_M <= sum_HCP_opt_M_j (jj,u)
+                sum_HCP_opt_M_j (jj,u) = sum_nei_opt_M;
+                HCP_opt_M(diff_idx(1)) = nei_opt_M(1);
+                HCP_opt_M(diff_idx(2)) = nei_opt_M(2);
+                cur_combinition(diff_idx(1),:) = neighbor(1,:);
+                cur_combinition(diff_idx(2),:) = neighbor(2,:);
             else
                 break;
-            end          
+            end
         end % End HCP
+
+        
+        Timer_HCP(jj,u) = toc(c);
     
-    
+        d = tic;
         %% Simulated Annealing Pairing
         % Initialization
         Temperature = 20;
@@ -110,10 +143,11 @@ parfor u=1:length(Pt)
         Time_budget = 50;
         cur_time = 0;
         % RP and calculate blocklength as current optimum blocklength
-        [sum_SAP_opt_M_j(jj,u), SAP_opt_M(:,u)] = M_cal(N1, RP_user_pairing(:,:,u), K,...
-                                            eplsion1R,eplsion2R,rho(u),N,eta);
+        sum_SAP_opt_M_j(jj,u) = sum_RP_opt_M_j(jj,u);
+        SAP_opt_M = RP_opt_M;
 
         cur_combinition = RP_user_pairing(:,:,u); 
+
         while 1
             % Time update
             cur_time = cur_time+1;
@@ -122,22 +156,30 @@ parfor u=1:length(Pt)
                 break;
             end
             % Find neighbor
-            [neighbor_1, neighbor_2] = neighbor_finder(cur_combinition, K);
+            [neighbor_1, neighbor_2, diff_idx] = neighbor_finder(cur_combinition, K);
             % Choose neighbor randomly
             if randi(2) == 1
                 neighbor = neighbor_1;
             else
                 neighbor = neighbor_2;
             end
-            % Calculate blocklength for neighbor
-            [sum_nei_opt_M] = M_cal(N1, neighbor, K,...
-                                            eplsion1R,eplsion2R,rho(u),N,eta);
+
+            % calculate sum of non-changing pair
+            tmp_sum = sum_SAP_opt_M_j(jj,u) - SAP_opt_M(diff_idx(1)) - SAP_opt_M(diff_idx(2));
+
+            % calculate sum of changing pair
+            [sum_nei_opt_M, nei_opt_M] = M_cal(N1, neighbor, 2,...
+                                            eplsion1R,eplsion2R,rho(u),eta,lamda);
+            sum_nei_opt_M = tmp_sum + sum_nei_opt_M;
 
             % Find the solution for this iteration
             % Better solution
             if  sum_nei_opt_M <= sum_SAP_opt_M_j (jj,u)
                 sum_SAP_opt_M_j (jj,u) = sum_nei_opt_M;
-                cur_combinition = neighbor;
+                SAP_opt_M(diff_idx(1)) = nei_opt_M(1);
+                SAP_opt_M(diff_idx(2)) = nei_opt_M(2);
+                cur_combinition(diff_idx(1),:) = neighbor(1,:);
+                cur_combinition(diff_idx(2),:) = neighbor(2,:);
             % Worse solution
             else
                 delta_E = sum_SAP_opt_M_j (jj,u) - sum_nei_opt_M;
@@ -145,7 +187,10 @@ parfor u=1:length(Pt)
                 % Accept worse solution
                 if exp(delta_E/Temperature) >= rn
                     sum_SAP_opt_M_j (jj,u) = sum_nei_opt_M;
-                    cur_combinition = neighbor;
+                    SAP_opt_M(diff_idx(1)) = nei_opt_M(1);
+                    SAP_opt_M(diff_idx(2)) = nei_opt_M(2);
+                    cur_combinition(diff_idx(1),:) = neighbor(1,:);
+                    cur_combinition(diff_idx(2),:) = neighbor(2,:);
                 end           
             end
             % Annealing
@@ -153,8 +198,10 @@ parfor u=1:length(Pt)
             if Temperature < Temperature_min
                 break;
             end
-
+            
         end % End SAP
+        
+        Timer_SAP(jj,u) = toc(d);
     Simulated_Anealing_Pairing(:,:,u) = cur_combinition;                                                                        
     end
 
@@ -163,7 +210,9 @@ sum_RP_opt_M = mean(sum_RP_opt_M_j);
 sum_UPG_opt_M = mean(sum_UPG_opt_M_j);
 sum_HCP_opt_M = mean(sum_HCP_opt_M_j);
 sum_SAP_opt_M = mean(sum_SAP_opt_M_j);
-toc;
+
+t = toc(s)
+
 
 figure (1)
 
