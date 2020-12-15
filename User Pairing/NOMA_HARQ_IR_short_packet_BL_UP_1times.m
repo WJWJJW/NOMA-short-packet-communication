@@ -61,11 +61,12 @@ for u=1:length(Pt)
         User_pre_grouping(ii,2,u) = user_distance(K -1 + ii);
     end
     
-%     [UPG_thred1_check(:,u), UPG_thred2_check(:,u)] = thred_checker(User_pre_grouping(:,:,u), K, eplsion1R, eplsion2R, rho(u), eta);
+    [UPG_thred1_check(:,u), UPG_thred2_check(:,u)] = ...
+    thred_checker(User_pre_grouping(:,:,u), K, eplsion1R, eplsion2R, rho(u), eta, lamda);
     
     % Total blocklength for User Pre-Grouping
     [sum_UPG_opt_M(u), UPG_opt_M] = M_cal(N1, User_pre_grouping(:,:,u), K,...
-                                        eplsion1R,eplsion2R,rho(u),N,eta);
+                                        eplsion1R,eplsion2R,rho(u),eta,lamda);
     
     tic;
     %% Hill Climbing Pairing
@@ -129,7 +130,7 @@ for u=1:length(Pt)
     cur_time = 0;
     % RP and calculate blocklength as current optimum blocklength
     [sum_SAP_opt_M(u), SAP_opt_M(:,u)] = M_cal(N1, RP_user_pairing(:,:,u), K,...
-                                        eplsion1R,eplsion2R,rho(u),N,eta);
+                                        eplsion1R,eplsion2R,rho(u),eta,lamda);
                                     
     cur_combinition = RP_user_pairing(:,:,u); 
     while 1
@@ -140,23 +141,30 @@ for u=1:length(Pt)
             break;
         end
         % Find neighbor
-        [neighbor_1, neighbor_2] = neighbor_finder(cur_combinition, K);
+        [neighbor_1, neighbor_2, diff_idx] = neighbor_finder(cur_combinition, K);
         % Choose neighbor randomly
         if randi(2) == 1
             neighbor = neighbor_1;
         else
             neighbor = neighbor_2;
         end
-        % Calculate blocklength for neighbor
-        [sum_nei_opt_M, nei_opt_M] = M_cal(N1, neighbor, K,...
-                                        eplsion1R,eplsion2R,rho(u),N,eta);
+
+        % calculate sum of non-changing pair
+        tmp_sum = sum_SAP_opt_M(u) - SAP_opt_M(diff_idx(1),u) - SAP_opt_M(diff_idx(2),u);
+        
+        % calculate sum of changing pair
+        [sum_nei_opt_M, nei_opt_M] = M_cal(N1, neighbor, 2,...
+                                        eplsion1R,eplsion2R,rho(u),eta,lamda);
+        sum_nei_opt_M = tmp_sum + sum_nei_opt_M;
         
         % Find the solution for this iteration
         % Better solution
         if  sum_nei_opt_M <= sum_SAP_opt_M (u)
             sum_SAP_opt_M (u) = sum_nei_opt_M;
-            SAP_opt_M(:,u) = nei_opt_M;
-            cur_combinition = neighbor;
+            SAP_opt_M(diff_idx(1),u) = nei_opt_M(1);
+            SAP_opt_M(diff_idx(2),u) = nei_opt_M(2);
+            cur_combinition(diff_idx(1),:) = neighbor(1,:);
+            cur_combinition(diff_idx(2),:) = neighbor(2,:);
         % Worse solution
         else
             delta_E = sum_SAP_opt_M (u) - sum_nei_opt_M;
@@ -164,8 +172,10 @@ for u=1:length(Pt)
             % Accept worse solution
             if exp(delta_E/Temperature) >= rn
                 sum_SAP_opt_M (u) = sum_nei_opt_M;
-                SAP_opt_M(:,u) = nei_opt_M;
-                cur_combinition = neighbor;
+                SAP_opt_M(diff_idx(1),u) = nei_opt_M(1);
+                SAP_opt_M(diff_idx(2),u) = nei_opt_M(2);
+                cur_combinition(diff_idx(1),:) = neighbor(1,:);
+                cur_combinition(diff_idx(2),:) = neighbor(2,:);
             end           
         end
         % Annealing
@@ -176,10 +186,23 @@ for u=1:length(Pt)
             
     end % End SAP
     Simulated_Anealing_Pairing(:,:,u) = cur_combinition;
-%     [SAG_thred1_check(:,u), SAG_thred2_check(:,u)] = thred_checker(Simulated_Anealing_Pairing(:,:,u), K, eplsion1R, eplsion2R, rho(u), eta);
+    [SAG_thred1_check(:,u), SAG_thred2_check(:,u)] = ...
+    thred_checker(Simulated_Anealing_Pairing(:,:,u), K, eplsion1R, eplsion2R, rho(u), eta, lamda);
     toc;
     Timer(2,u) = toc;
 end
+
+
+% Save variable
+test_idx = 3;
+path_str1 = ['E:\WeiJie\NOMA\Matlab\Thesis_data\1215_UP_test\UP_1time_' num2str(test_idx) '_u_distribution'];
+path_str2 = ['E:\WeiJie\NOMA\Matlab\Thesis_data\1215_UP_test\UP_1time_' num2str(test_idx) '_check'];
+path_str3 = ['E:\WeiJie\NOMA\Matlab\Thesis_data\1215_UP_test\UP_1time_' num2str(test_idx) '_u_combination'];
+
+save(path_str1,'user_distance');
+save(path_str2, 'SAG_thred1_check','SAG_thred2_check', 'UPG_thred1_check', 'UPG_thred2_check');
+save(path_str3,'Simulated_Anealing_Pairing','User_pre_grouping');
+
 
 figure (1)
 
