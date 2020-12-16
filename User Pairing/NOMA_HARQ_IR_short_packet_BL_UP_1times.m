@@ -105,7 +105,7 @@ for u=1:length(Pt)
         
         % Find the solution for this iteration
 
-        if  sum_nei_opt_M <= sum_HCP_opt_M (u)
+        if  sum_nei_opt_M < sum_HCP_opt_M (u)
             sum_HCP_opt_M (u) = sum_nei_opt_M;
             HCP_opt_M(diff_idx(1),u) = nei_opt_M(1);
             HCP_opt_M(diff_idx(2),u) = nei_opt_M(2);
