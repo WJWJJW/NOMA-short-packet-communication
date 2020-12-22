@@ -1,6 +1,6 @@
 clc; clear variables; close all;
 N = 1e6; % number of Monte Carlo
-K = 5;  % number of cluster (number of user  = 2K)
+K = 8;  % number of cluster (number of user  = 2K)
 NN = 80; % number of information bit
 N1 = NN;
 N2 = NN;
@@ -29,7 +29,14 @@ Timer = zeros(2, length(Pt));
 RP_user_pairing = zeros(K,2,length(Pt));
 User_pre_grouping = zeros(K,2,length(Pt));
 Simulated_Anealing_Pairing = zeros(K,2,length(Pt));
+Exhaustive_pairing = zeros(K,2,length(Pt));
 
+
+pair_idx_tmp = paircombs(2*K);
+pair_idx = 2*K+1-fliplr(pair_idx_tmp);
+exhaustive_pairing = reshape(user_distance(pair_idx)',K,2,length(pair_idx));
+
+sum_EP_opt_M = zeros(1,length(Pt));
 sum_RP_opt_M = zeros(1,length(Pt));
 sum_UPG_opt_M = zeros(1,length(Pt));
 sum_HCP_opt_M = zeros(1,length(Pt));
@@ -39,10 +46,30 @@ HCP_opt_M = zeros(K, length(Pt));
 SAP_opt_M = zeros(K, length(Pt));
 
 
+
+
 for u=1:length(Pt)
 
     h = (randn(1,N)+1i*randn(1,N));
     lamda = mean(abs(h).^2);
+    %% Exhaustive Paring (EP)
+    [tmp_sum_EP_M, tmp_EP_M] = M_cal(N1, exhaustive_pairing(:,:,1), K,...
+                                            eplsion1R,eplsion2R,rho(u),eta,lamda);
+    Exhaustive_pairing(:,:,u) = exhaustive_pairing(:,:,1);
+    for jj=2:length(exhaustive_pairing)
+        % Total blocklength for exhaustive paring
+        [sum_EP_M, EP_M] = M_cal(N1, exhaustive_pairing(:,:,jj), K,...
+                                            eplsion1R,eplsion2R,rho(u),eta,lamda);
+        
+        if sum_EP_M < tmp_sum_EP_M
+            tmp_sum_EP_M = sum_EP_M;
+            tmp_EP_M = EP_M;
+            Exhaustive_pairing(:,:,u) = exhaustive_pairing(:,:,jj);
+        end       
+    end
+    sum_EP_opt_M(u) = tmp_sum_EP_M;
+       
+    
     %% Random Paring (RP)
     RP_indices = randperm(2*K);
     for ii=1:K
@@ -58,7 +85,7 @@ for u=1:length(Pt)
     %% User Pre-Grouping
     for ii=1:K
         User_pre_grouping(ii,1,u) = user_distance(ii);
-        User_pre_grouping(ii,2,u) = user_distance(K -1 + ii);
+        User_pre_grouping(ii,2,u) = user_distance(K + ii);
     end
     
     [UPG_thred1_check(:,u), UPG_thred2_check(:,u)] = ...
@@ -123,10 +150,10 @@ for u=1:length(Pt)
     tic;
     %% Simulated Annealing Pairing
     % Initialization
-    Temperature = 20;
-    Temperature_min = 0.1;
-    annealing_factor = 0.7; 
-    Time_budget = 50;
+    Temperature = 50;
+    Temperature_min = 0.0001;
+    annealing_factor = 0.9; 
+    Time_budget = 100;
     cur_time = 0;
     % RP and calculate blocklength as current optimum blocklength
     [sum_SAP_opt_M(u), SAP_opt_M(:,u)] = M_cal(N1, RP_user_pairing(:,:,u), K,...
@@ -135,7 +162,7 @@ for u=1:length(Pt)
     cur_combinition = RP_user_pairing(:,:,u); 
     while 1
         % Time update
-        cur_time = cur_time+1;
+        cur_time = cur_time;
         % Time budget check
         if cur_time > Time_budget
             break;
@@ -159,7 +186,7 @@ for u=1:length(Pt)
         
         % Find the solution for this iteration
         % Better solution
-        if  sum_nei_opt_M <= sum_SAP_opt_M (u)
+        if  sum_nei_opt_M < sum_SAP_opt_M (u)
             sum_SAP_opt_M (u) = sum_nei_opt_M;
             SAP_opt_M(diff_idx(1),u) = nei_opt_M(1);
             SAP_opt_M(diff_idx(2),u) = nei_opt_M(2);
@@ -186,7 +213,7 @@ for u=1:length(Pt)
             
     end % End SAP
     Simulated_Anealing_Pairing(:,:,u) = cur_combinition;
-    [SAG_thred1_check(:,u), SAG_thred2_check(:,u)] = ...
+    [SAP_thred1_check(:,u), SAP_thred2_check(:,u)] = ...
     thred_checker(Simulated_Anealing_Pairing(:,:,u), K, eplsion1R, eplsion2R, rho(u), eta, lamda);
     toc;
     Timer(2,u) = toc;
@@ -194,25 +221,29 @@ end
 
 
 % Save variable
-test_idx = 3;
-path_str1 = ['E:\WeiJie\NOMA\Matlab\Thesis_data\1215_UP_test\UP_1time_' num2str(test_idx) '_u_distribution'];
-path_str2 = ['E:\WeiJie\NOMA\Matlab\Thesis_data\1215_UP_test\UP_1time_' num2str(test_idx) '_check'];
-path_str3 = ['E:\WeiJie\NOMA\Matlab\Thesis_data\1215_UP_test\UP_1time_' num2str(test_idx) '_u_combination'];
+test_idx = 1;
+path_str1 = ['E:\WeiJie\NOMA\Matlab\Thesis_data\1221_UP_test\UP_1time_' num2str(test_idx) '_u_distribution'];
+path_str2 = ['E:\WeiJie\NOMA\Matlab\Thesis_data\1221_UP_test\UP_1time_' num2str(test_idx) '_check'];
+path_str3 = ['E:\WeiJie\NOMA\Matlab\Thesis_data\1221_UP_test\UP_1time_' num2str(test_idx) '_u_combination'];
 
 save(path_str1,'user_distance');
-save(path_str2, 'SAG_thred1_check','SAG_thred2_check', 'UPG_thred1_check', 'UPG_thred2_check');
+save(path_str2, 'SAP_thred1_check','SAP_thred2_check', 'UPG_thred1_check', 'UPG_thred2_check');
 save(path_str3,'Simulated_Anealing_Pairing','User_pre_grouping');
+name_str = ['E:\WeiJie\NOMA\Matlab\Thesis_data\1221_UP_test\UP_test_' num2str(test_idx) '.png'];
 
 
 figure (1)
 
 plot(Pt, sum_RP_opt_M,'b');
 hold on; grid on;
-plot(Pt, sum_UPG_opt_M,'g');
+plot(Pt, sum_UPG_opt_M,'-.gs');
 plot(Pt, sum_HCP_opt_M,'r');
 plot(Pt, sum_SAP_opt_M,'Color',[1 0.5 0]);
-
+plot(Pt, sum_EP_opt_M, 'mo');
 
 ylabel('blocklength');
 legend('Random Pairing','User Pre-Grouping',...
-       'Hill Climbing Based Pairing', 'Simulated Anealing Based Pairing');
+       'Hill Climbing Based Pairing', 'Simulated Anealing Based Pairing', 'Exhaustive Paring');
+   
+   
+saveas(gcf,name_str);
