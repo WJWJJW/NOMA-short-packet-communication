@@ -4,7 +4,7 @@ cur_opt_M = zeros(1,K,'double');
         lamda_d = (1/2.*user_pairing(ii,:).^-eta).*lamda;
         
         contraint = (lamda_d(1)*eplsion1R)/(lamda_d(2)*eplsion2R);
-        theta = contraint/3;
+        theta = contraint/2;
         
         check = (lamda_d(2)*eplsion2R*rho + 2)*lamda_d(1)*eplsion1R - (lamda_d(2)*eplsion2R.*rho + 4)*lamda_d(2)*eplsion2R > 0;
         switch (check)

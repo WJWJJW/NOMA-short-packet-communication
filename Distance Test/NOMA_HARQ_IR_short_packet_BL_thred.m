@@ -6,7 +6,7 @@ N2 = 80;
 eplsion1R = 10^-5;
 eplsion2R = 10^-4;
 
-Pt = -4;                    %Transmit Power in dBm
+Pt = 20;                    %Transmit Power in dBm
 pt = (10^-3)*db2pow(Pt);    %Transmit Power (linear scale)
 
 BW = 10^6;                  %System bandwidth
@@ -21,7 +21,7 @@ dis_thred2 = (1.64*eplsion2R/eplsion1R)^(1/eta);
 dis_thred3 = (2*eplsion2R/eplsion1R)^(1/eta);
 
 
-d1 = 84;
+d1 = 119;
 diff = 10:2:150;
 d2 = d1+diff;
 
@@ -70,14 +70,7 @@ for dd=1:length(diff)
                              / (2*k*lamda2*eplsion2R)));
         check2(dd) = 1;
     end
-          
-          
-%     opt_a1(dd) = (-lamda1*eplsion1R + sqrt((lamda1*eplsion1R)^2+4*(lamda2*eplsion2R)^2*rho*(lamda1*eplsion1R-lamda2*eplsion2R)))...
-%           / (2*lamda2*eplsion2R*rho*(lamda1*eplsion1R-lamda2*eplsion2R));
-%     opt_M_u1(dd) = N1/log2(1+opt_a1(dd)*rho*(lamda1*eplsion1R-lamda2*eplsion2R));
-%     opt_M_u2(dd) = N1/log2(1+opt_a1(dd)*rho*(lamda1*eplsion1R-lamda2*eplsion2R));
-%     opt_M(dd) = N1/log2(1+((-lamda1*eplsion1R + sqrt((lamda1*eplsion1R)^2+4*(lamda2*eplsion2R)^2*rho*(lamda1*eplsion1R-lamda2*eplsion2R)))...
-%                      / (2*lamda2*eplsion2R)));
+
 end
 
 % figure (1)
@@ -131,6 +124,7 @@ axis([-inf inf 0 1]);
 
 yyaxis right
 plot(d2, real(opt_M), 'o', 'Color',[1 0.5 0]);
+% set(gca, 'YTick', 120:1:125, 'YTickLabel', 120:1:125);
 hold on; grid on;
 % plot(d2, real(opt_M_u1),'o','Color',[1 0.5 0]);
 % plot(d2, real(opt_M_u2),'+','Color',[1 0.5 0]);
