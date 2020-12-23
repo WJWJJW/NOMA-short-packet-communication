@@ -1,12 +1,14 @@
 clc; clear variables; close all;
 N = 1e6; % number of Monte Carlo
-K = 8;  % number of cluster (number of user  = 2K)
+K = 5;  % number of cluster (number of user  = 2K)
 NN = 80; % number of information bit
 N1 = NN;
 N2 = NN;
 
 eplsion1R = 10^-5;
 eplsion2R = 10^-4;
+
+s = 6;
 
 Pt = -10:2:0;                    %Transmit Power in dBm
 pt = (10^-3).*db2pow(Pt);    %Transmit Power (linear scale)
@@ -54,12 +56,12 @@ for u=1:length(Pt)
     lamda = mean(abs(h).^2);
     %% Exhaustive Paring (EP)
     [tmp_sum_EP_M, tmp_EP_M] = M_cal(N1, exhaustive_pairing(:,:,1), K,...
-                                            eplsion1R,eplsion2R,rho(u),eta,lamda);
+                                            eplsion1R,eplsion2R,rho(u),eta,lamda,s);
     Exhaustive_pairing(:,:,u) = exhaustive_pairing(:,:,1);
     for jj=2:length(exhaustive_pairing)
         % Total blocklength for exhaustive paring
         [sum_EP_M, EP_M] = M_cal(N1, exhaustive_pairing(:,:,jj), K,...
-                                            eplsion1R,eplsion2R,rho(u),eta,lamda);
+                                            eplsion1R,eplsion2R,rho(u),eta,lamda,s);
         
         if sum_EP_M < tmp_sum_EP_M
             tmp_sum_EP_M = sum_EP_M;
@@ -80,7 +82,7 @@ for u=1:length(Pt)
     
     % Total blocklength for random pairing
     [sum_RP_opt_M(u), RP_opt_M] = M_cal(N1, RP_user_pairing(:,:,u), K,...
-                                        eplsion1R,eplsion2R,rho(u),eta,lamda);
+                                        eplsion1R,eplsion2R,rho(u),eta,lamda,s);
     
     %% User Pre-Grouping
     for ii=1:K
@@ -93,13 +95,13 @@ for u=1:length(Pt)
     
     % Total blocklength for User Pre-Grouping
     [sum_UPG_opt_M(u), UPG_opt_M] = M_cal(N1, User_pre_grouping(:,:,u), K,...
-                                        eplsion1R,eplsion2R,rho(u),eta,lamda);
+                                        eplsion1R,eplsion2R,rho(u),eta,lamda,s);
     
     tic;
     %% Hill Climbing Pairing
     % RP and calculate blocklength as current optimum blocklength
     [sum_HCP_opt_M(u), HCP_opt_M(:,u)] = M_cal(N1, RP_user_pairing(:,:,u), K,...
-                                        eplsion1R,eplsion2R,rho(u),eta,lamda);
+                                        eplsion1R,eplsion2R,rho(u),eta,lamda,s);
     
     cur_combinition = RP_user_pairing(:,:,u);
     while 1
@@ -110,12 +112,12 @@ for u=1:length(Pt)
         
         % calculate sum of changing pair
         [sum_nei1_opt_M, nei1_opt_M] = M_cal(N1, neighbor_1, 2,...
-                                        eplsion1R,eplsion2R,rho(u),eta,lamda);
+                                        eplsion1R,eplsion2R,rho(u),eta,lamda,s);
         sum_nei1_opt_M = tmp_sum + sum_nei1_opt_M;
 
 
         [sum_nei2_opt_M, nei2_opt_M] = M_cal(N1, neighbor_2, 2,...
-                                        eplsion1R,eplsion2R,rho(u),eta,lamda);
+                                        eplsion1R,eplsion2R,rho(u),eta,lamda,s);
         sum_nei2_opt_M = tmp_sum + sum_nei2_opt_M;
 
 
@@ -151,18 +153,18 @@ for u=1:length(Pt)
     %% Simulated Annealing Pairing
     % Initialization
     Temperature = 50;
-    Temperature_min = 0.0001;
+    Temperature_min = 0.01;
     annealing_factor = 0.9; 
     Time_budget = 100;
     cur_time = 0;
     % RP and calculate blocklength as current optimum blocklength
     [sum_SAP_opt_M(u), SAP_opt_M(:,u)] = M_cal(N1, RP_user_pairing(:,:,u), K,...
-                                        eplsion1R,eplsion2R,rho(u),eta,lamda);
+                                        eplsion1R,eplsion2R,rho(u),eta,lamda,s);
                                     
     cur_combinition = RP_user_pairing(:,:,u); 
     while 1
         % Time update
-        cur_time = cur_time;
+        cur_time = cur_time+1;
         % Time budget check
         if cur_time > Time_budget
             break;
@@ -181,7 +183,7 @@ for u=1:length(Pt)
         
         % calculate sum of changing pair
         [sum_nei_opt_M, nei_opt_M] = M_cal(N1, neighbor, 2,...
-                                        eplsion1R,eplsion2R,rho(u),eta,lamda);
+                                        eplsion1R,eplsion2R,rho(u),eta,lamda,s);
         sum_nei_opt_M = tmp_sum + sum_nei_opt_M;
         
         % Find the solution for this iteration
@@ -236,7 +238,7 @@ figure (1)
 
 plot(Pt, sum_RP_opt_M,'b');
 hold on; grid on;
-plot(Pt, sum_UPG_opt_M,'-.gs');
+plot(Pt, sum_UPG_opt_M,'-.cs');
 plot(Pt, sum_HCP_opt_M,'r');
 plot(Pt, sum_SAP_opt_M,'Color',[1 0.5 0]);
 plot(Pt, sum_EP_opt_M, 'mo');
