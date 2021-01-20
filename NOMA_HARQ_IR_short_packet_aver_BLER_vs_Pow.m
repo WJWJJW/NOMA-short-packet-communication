@@ -1,3 +1,6 @@
+% This script analysis relation between power and BLER
+% fixed blocklength and power allocation coefficient
+
 clc; clear variables; close all;
 N1=80;
 N2=80;
@@ -34,9 +37,9 @@ w2 = 2^(N2/M)-1;
 Xi_1 = sqrt(1/(2*pi*(2^(2*N1/M)-1)));
 Xi_2 = sqrt(1/(2*pi*(2^(2*N2/M)-1)));
 
-eta_1 = w1 - (1/(2*sqrt(M)*Xi_1));
+nu_1 = w1 - (1/(2*sqrt(M)*Xi_1));
 tau_1 = w1 + (1/(2*sqrt(M)*Xi_1));
-eta_2 = w2 - (1/(2*sqrt(M)*Xi_2));
+nu_2 = w2 - (1/(2*sqrt(M)*Xi_2));
 tau_2 = w2 + (1/(2*sqrt(M)*Xi_2));
 
 Pt = 0:40; %Transmitted power in dBm
@@ -63,17 +66,17 @@ for u=1:p
     
     % BLER from approximation Q
     
-    first_term_22 = ei(-alpha2/(lamda2*rho*alpha1*(alpha2-alpha1*eta_2)))-...
+    first_term_22 = ei(-alpha2/(lamda2*rho*alpha1*(alpha2-alpha1*nu_2)))-...
     ei(-alpha2/(lamda2*rho*alpha1*(alpha2-alpha1*tau_2)));
     
-    first_term_12 = ei(-alpha2/(lamda1*rho*alpha1*(alpha2-alpha1*eta_2)))-...
+    first_term_12 = ei(-alpha2/(lamda1*rho*alpha1*(alpha2-alpha1*nu_2)))-...
     ei(-alpha2/(lamda1*rho*alpha1*(alpha2-alpha1*tau_2)));
     
-    second_term_22 = exp(eta_2/(lamda2*rho*(alpha2-alpha1*eta_2)))*(alpha2-alpha1*eta_2) -...
-    exp(eta_2/(lamda2*rho*(alpha2-alpha1*tau_2)))*(alpha2-alpha1*tau_2);
+    second_term_22 = exp(nu_2/(lamda2*rho*(alpha2-alpha1*nu_2)))*(alpha2-alpha1*nu_2) -...
+    exp(nu_2/(lamda2*rho*(alpha2-alpha1*tau_2)))*(alpha2-alpha1*tau_2);
     
-    second_term_12 = exp(eta_2/(lamda1*rho*(alpha2-alpha1*eta_2)))*(alpha2-alpha1*eta_2) - ...
-    exp(eta_2/(lamda1*rho*(alpha2-alpha1*tau_2)))*(alpha2-alpha1*tau_2); 
+    second_term_12 = exp(nu_2/(lamda1*rho*(alpha2-alpha1*nu_2)))*(alpha2-alpha1*nu_2) - ...
+    exp(nu_2/(lamda1*rho*(alpha2-alpha1*tau_2)))*(alpha2-alpha1*tau_2); 
     
     Epsilon2(u) = 1 - ((alpha2*Xi_2*sqrt(M)*exp(1/(lamda2*rho*alpha1)))/(lamda2*rho*(alpha1^2)))* first_term_22...
     - ((Xi_2*sqrt(M))/alpha1)*second_term_22;
@@ -82,7 +85,7 @@ for u=1:p
     - ((Xi_2*sqrt(M))/alpha1)*second_term_12;
     
     
-    Epsilon11(u) = 1 + Xi_1*sqrt(M)*lamda1*alpha1*rho*(exp(-tau_1/(lamda1*alpha1*rho))-exp(-eta_1/(lamda1*alpha1*rho)));
+    Epsilon11(u) = 1 + Xi_1*sqrt(M)*lamda1*alpha1*rho*(exp(-tau_1/(lamda1*alpha1*rho))-exp(-nu_1/(lamda1*alpha1*rho)));
     Epsilon1(u) = Epsilon12(u) + Epsilon11(u);
 
     % BLER from approximation Q by MATLAB
@@ -90,9 +93,9 @@ for u=1:p
     fun2 = @(x) 1-exp(x./(-lamda1*rho*(alpha2-alpha1*x)));
     fun3 = @(x) 1-exp(x./(-lamda1*rho*alpha1));
 
-    MAT_Epsilon2(u) = Xi_2*sqrt(M)*integral(fun1,eta_2,tau_2);
-    MAT_Epsilon12(u) = Xi_2*sqrt(M)*integral(fun2,eta_2,tau_2);
-    MAT_Epsilon11(u) = Xi_1*sqrt(M)*integral(fun3,eta_1,tau_1);
+    MAT_Epsilon2(u) = Xi_2*sqrt(M)*integral(fun1,nu_2,tau_2);
+    MAT_Epsilon12(u) = Xi_2*sqrt(M)*integral(fun2,nu_2,tau_2);
+    MAT_Epsilon11(u) = Xi_1*sqrt(M)*integral(fun3,nu_1,tau_1);
     MAT_Epsilon1(u) = MAT_Epsilon12(u) + MAT_Epsilon11(u);
     
 end
