@@ -1,6 +1,6 @@
 clc; clear variables; close all;
 N = 1e6; % number of Monte Carlo
-K = 20;  % number of cluster (number of user  = 2K)
+K = 50;  % number of cluster (number of user  = 2K)
 NN = 256; % number of information bit
 N1 = NN;
 N2 = NN;
@@ -33,15 +33,20 @@ user_distance = sort(user_distance);
 User_pre_grouping = zeros(K,2,length(Pt));
 Simulated_Anealing_Pairing = zeros(K,2,length(Pt));
 User_pre_grouping_NLUPA = zeros(K,2,length(Pt));
+Hungarian_pairing = zeros(K,2,length(Pt));
 
 
 sum_UPG_opt_M = zeros(1,length(Pt));
 sum_SAP_opt_M = zeros(1,length(Pt));
 sum_NLUPA_opt_M = zeros(1,length(Pt));
+sum_HAP_opt_M = zeros(1,length(Pt));
+
 
 UPG_opt_M = zeros(K,length(Pt));
 SAP_opt_M = zeros(K, length(Pt));
 NULPA_opt_M = zeros(K,length(Pt));
+HAP_opt_M = zeros(K, length(Pt));
+
 
 delta = 1/2;
 for u=1:length(Pt)
@@ -57,6 +62,9 @@ for u=1:length(Pt)
     % User Pre-Grouping NLUPA
     [sum_NLUPA_opt_M(u), NULPA_opt_M(:,u), User_pre_grouping_NLUPA(:,:,u)] =...
         UPG_NLUPA(user_distance, NN, K, eplsion1R, eplsion2R, rho(u), eta, lamda, delta);
+    
+    [sum_HAP_opt_M(u), HAP_opt_M(:,u), Hungarian_pairing(:,:,u)] =...
+        HAP(user_distance, NN, K, eplsion1R, eplsion2R, rho(u), eta, lamda, delta);
 end
 
 
@@ -79,10 +87,10 @@ plot(Pt, sum_UPG_opt_M,'b');
 hold on; grid on;
 plot(Pt, sum_NLUPA_opt_M,'r');
 plot(Pt, sum_SAP_opt_M,'Color',[1 0.5 0], 'linewidth', 1.5);
-
+plot(Pt, sum_HAP_opt_M, '*g');
 
 ylabel('blocklength');
-legend('User Pre-Grouping (Proposed)','User Pre-Grouping (NLUPA)','Simulated Anealing Based Pairing');
+legend('User Pre-Grouping (Proposed)','User Pre-Grouping (NLUPA)','Simulated Anealing Based Pairing', 'Hungarian_pairing');
    
    
 % saveas(gcf,name_str);
