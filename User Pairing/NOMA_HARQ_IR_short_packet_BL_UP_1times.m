@@ -3,7 +3,7 @@ clc; clear variables; close all;
 
 
 N = 1e6; % number of Monte Carlo
-K = 8;  % number of cluster (number of user  = 2K)
+K = 5;  % number of cluster (number of user  = 2K)
 NN = 80; % number of information bit
 N1 = NN;
 N2 = NN;
@@ -28,16 +28,19 @@ Exhaustive_pairing = zeros(K,2,length(Pt));
 RP_user_pairing = zeros(K,2,length(Pt));
 User_pre_grouping = zeros(K,2,length(Pt));
 Simulated_Anealing_Pairing = zeros(K,2,length(Pt));
+Hungarian_pairing = zeros(K,2,length(Pt));
 
 sum_EP_opt_M = zeros(1,length(Pt));
 sum_RP_opt_M = zeros(1,length(Pt));
 sum_UPG_opt_M = zeros(1,length(Pt));
 sum_SAP_opt_M = zeros(1,length(Pt));
+sum_HAP_opt_M = zeros(1,length(Pt));
 
 EP_opt_M = zeros(K,length(Pt));
 RP_opt_M = zeros(K,length(Pt));
 UPG_opt_M = zeros(K,length(Pt));
 SAP_opt_M = zeros(K, length(Pt));
+HAP_opt_M = zeros(K, length(Pt));
 
 dis_thred1 = (eplsion2R/eplsion1R)^(1/eta);
 
@@ -68,6 +71,11 @@ for u=1:length(Pt)
     % Simulated Annealing Pairing
     [sum_SAP_opt_M(u), SAP_opt_M(:,u), Simulated_Anealing_Pairing(:,:,u)] =...
         SAP(user_distance, NN, K, eplsion1R, eplsion2R, rho(u), eta, lamda, delta);
+    
+    % Hungarian Algorithm Pairing
+    [sum_HAP_opt_M(u), HAP_opt_M(:,u), Hungarian_pairing(:,:,u)] =...
+        HAP(user_distance, NN, K, eplsion1R, eplsion2R, rho(u), eta, lamda, delta);
+    
 end
 
 
@@ -90,9 +98,10 @@ hold on; grid on;
 plot(Pt, sum_UPG_opt_M,'-.cs');
 plot(Pt, sum_SAP_opt_M,'Color',[1 0.5 0]);
 plot(Pt, sum_EP_opt_M, 'mo');
+plot(Pt, sum_HAP_opt_M, '*g');
 
 ylabel('blocklength');
-legend('Random Pairing','User Pre-Grouping','Simulated Anealing Based Pairing', 'Exhaustive Paring');
+legend('Random Pairing','User Pre-Grouping','Simulated Anealing Based Pairing', 'Exhaustive Paring', 'Hungarian_pairing');
    
 
 figure (2)
