@@ -15,7 +15,7 @@ No = -174 + 10*log10(BW);   %Noise power (dBm)
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
 d1 = 100;
-d2 = 150;
+d2 = 175;
 eta = 4;
 
 h1 = sqrt(1/2*d1^-eta)*(randn(1,N)+1i*randn(1,N));
@@ -87,11 +87,11 @@ for u=1:length(Pt)
     OMA_opt_M1(u) = N1/(beta1*log2(1+(eplsion1R*lamda1*rho1)));
     OMA_opt_M2(u) = N2/(beta2*log2(1+(eplsion2R*lamda2*rho2)));
     
-    OMA_opt_M1_appro(u) = N1/(beta1*(eplsion1R*lamda1*rho1));
-    OMA_opt_M2_appro(u) = N2/(beta2*(eplsion2R*lamda2*rho2));
+%     OMA_opt_M1_appro(u) = N1/(beta1*(eplsion1R*lamda1*rho1));
+%     OMA_opt_M2_appro(u) = N2/(beta2*(eplsion2R*lamda2*rho2));
     
     OMA_opt_M(u) = OMA_opt_M1(u)+OMA_opt_M2(u);
-    OMA_opt_M_appro(u) = OMA_opt_M1_appro(u)+OMA_opt_M2_appro(u);
+%     OMA_opt_M_appro(u) = OMA_opt_M1_appro(u)+OMA_opt_M2_appro(u);
 
 end
 
@@ -101,7 +101,7 @@ figure(1)
 plot(Pt, NOMA_opt_M, 'b', 'linewidth', 1.5);
 hold on; grid on;
 plot(Pt, OMA_opt_M, 'r', 'linewidth', 1.5);
-plot(Pt, OMA_opt_M_appro, 'g', 'linewidth', 1.5);
+% plot(Pt, OMA_opt_M_appro, 'g', 'linewidth', 1.5);
 
 xlabel('Transmit power (dBm)');
 ylabel('M');
@@ -110,33 +110,33 @@ legend('NOMA','OMA');
 
 
 
-figure(2)
-plot(Pt, NOMA_opt_M, 'b', 'linewidth', 1.5);
-hold on; grid on;
-plot(Pt, OMA_opt_M1, '-or', 'linewidth', 1.5);
-plot(Pt, OMA_opt_M2, '-sr', 'linewidth', 1.5);
-plot(Pt, OMA_opt_M - NOMA_opt_M, 'g', 'linewidth', 1.5);
-
-xlabel('Transmit power (dBm)');
-ylabel('M');
-title('Required blocklength vs Transmit Power');
-legend('NOMA','OMA1','OMA2','Gap');
-
-
-
-figure(3)
-plot(Pt, NOMA_opt_M, 'b', 'linewidth', 1.5);
-hold on; grid on;
-plot(Pt, NOMA_opt_M21, '*b', 'linewidth', 1.5);
-plot(Pt, NOMA_opt_M22, 'sb', 'linewidth', 1.5);
-
-plot(Pt, NOMA_opt_M1, 'ob', 'linewidth', 1.5);
-
-plot(Pt, OMA_opt_M1, '-or', 'linewidth', 1.5);
-plot(Pt, OMA_opt_M2, '-sr', 'linewidth', 1.5);
-
-plot(Pt, OMA_opt_M1_appro, '-og', 'linewidth', 1.5);
-plot(Pt, OMA_opt_M2_appro, '-sg', 'linewidth', 1.5);
+% figure(2)
+% plot(Pt, NOMA_opt_M, 'b', 'linewidth', 1.5);
+% hold on; grid on;
+% plot(Pt, OMA_opt_M1, '-or', 'linewidth', 1.5);
+% plot(Pt, OMA_opt_M2, '-sr', 'linewidth', 1.5);
+% plot(Pt, OMA_opt_M - NOMA_opt_M, 'g', 'linewidth', 1.5);
+% 
+% xlabel('Transmit power (dBm)');
+% ylabel('M');
+% title('Required blocklength vs Transmit Power');
+% legend('NOMA','OMA1','OMA2','Gap');
+% 
+% 
+% 
+% figure(3)
+% plot(Pt, NOMA_opt_M, 'b', 'linewidth', 1.5);
+% hold on; grid on;
+% plot(Pt, NOMA_opt_M21, '*b', 'linewidth', 1.5);
+% plot(Pt, NOMA_opt_M22, 'sb', 'linewidth', 1.5);
+% 
+% plot(Pt, NOMA_opt_M1, 'ob', 'linewidth', 1.5);
+% 
+% plot(Pt, OMA_opt_M1, '-or', 'linewidth', 1.5);
+% plot(Pt, OMA_opt_M2, '-sr', 'linewidth', 1.5);
+% 
+% plot(Pt, OMA_opt_M1_appro, '-og', 'linewidth', 1.5);
+% plot(Pt, OMA_opt_M2_appro, '-sg', 'linewidth', 1.5);
 
 
 

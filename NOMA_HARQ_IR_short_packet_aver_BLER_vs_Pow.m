@@ -8,8 +8,8 @@ epsilon1R=10^-5;
 epsilon2R=10^-4;
 
 
-d1 = 400;
-d2 = 700;
+d1 = 100;
+d2 = 170;
 
 eta = 4;
 
@@ -23,7 +23,7 @@ lamda2 = mean(abs(h2).^2);
 % lamda1 = 1/(1+d1^eta);
 % lamda2 = 1/(1+d2^eta);
 
-BW = 10^6;                  %System bandwidth
+BW = 10^7;                  %System bandwidth
 No = -174 + 10*log10(BW);   %Noise power (dBm)
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
@@ -42,7 +42,7 @@ tau_1 = w1 + (1/(2*sqrt(M)*Xi_1));
 nu_2 = w2 - (1/(2*sqrt(M)*Xi_2));
 tau_2 = w2 + (1/(2*sqrt(M)*Xi_2));
 
-Pt = 0:40; %Transmitted power in dBm
+Pt = -10:30; %Transmitted power in dBm
 
 
 p = length(Pt);
