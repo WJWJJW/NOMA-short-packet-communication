@@ -18,7 +18,7 @@
 %     opt_M = c_matrix(sub2ind(sz,ind_matrix(:,1),ind_matrix(:,2)))';
 % end
 % 
-function [sum_opt_M, opt_M, Hungarian_pairing]=HAP(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda, delta)
+function [sum_opt_M, opt_M, Hungarian_pairing]=HAP(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda)
     n_set = user_distance(1:K);
     f_set = user_distance(K+1:2*K);
     c_matrix = zeros(K,K);

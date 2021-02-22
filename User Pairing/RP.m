@@ -1,5 +1,5 @@
 % Random Paring (RP)
-function [sum_opt_M, opt_M, RP_user_pairing]=RP(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda, delta)
+function [sum_opt_M, opt_M, RP_user_pairing]=RP(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda)
     RP_indices = randperm(2*K);
     RP_user_pairing = zeros(K,2);
     for ii=1:K
@@ -7,5 +7,5 @@ function [sum_opt_M, opt_M, RP_user_pairing]=RP(user_distance, N, K, eplsion1R, 
     end
     
     % Total blocklength for random pairing
-    [sum_opt_M, opt_M] = M_cal(N, RP_user_pairing, K, eplsion1R,eplsion2R,rho,eta,lamda, delta);
+    [sum_opt_M, opt_M] = M_cal_Mod(N,RP_user_pairing, K, eplsion1R,eplsion2R,rho,eta,lamda);
 end

@@ -1,5 +1,5 @@
 % User Pre-Grouping optimal delta (UPG_opt_delta)
-function [sum_opt_M, opt_M, User_pre_grouping] = UPG_opt_delta(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda, delta)
+function [sum_opt_M, opt_M, User_pre_grouping] = UPG_opt_delta(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda)
     User_pre_grouping = zeros(K,2);
     % Paring processing
     for ii=1:K
