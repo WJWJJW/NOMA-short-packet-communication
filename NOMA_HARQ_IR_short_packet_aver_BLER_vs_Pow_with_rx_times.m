@@ -4,19 +4,22 @@ tic
 N = 1e6;
 eta = 4;
 % User distance
-d1 = 400;
-d2 = 1000;
+d1 = 100;
+d2 = 200;
 
 % Rayleigh fading channel
 h1 = sqrt(1/2*d1^-eta)*(randn(1,N)+1i*randn(1,N));
 h2 = sqrt(1/2*d2^-eta)*(randn(1,N)+1i*randn(1,N));
 
+% Channel mean
 lambda1 = mean(abs(h1).^2);
 lambda2 = mean(abs(h2).^2);
 
 % AWGN noise
-BW = 10^6;                  %System bandwidth
-No = -174 + 10*log10(BW);   %Noise power (dBm)
+% BW = 10^6;                  %System bandwidth
+% No = -174 + 10*log10(BW);   %Noise power (dBm)
+% no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
+No = -100;
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
 % Parameter setting
@@ -29,13 +32,13 @@ w1 = 2.^(N1./M1)-1;
 w2 = 2.^(N2./M2)-1;
 
 % Transmit power in dBm
-Pt = 0:2:40;                
+Pt = 0:2:30;                
 % Pt = -113:2:-74;
 % Transmit power in linear scale
 pt = (10^-3)*10.^(Pt/10);
 
 % Power allocaitn coefficient
-alpha1 = 0.3;
+alpha1 = 0.2;
 alpha2 = 1 - alpha1;
 %%
 for mm = 1:length(M1)

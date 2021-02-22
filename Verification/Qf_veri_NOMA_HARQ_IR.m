@@ -4,8 +4,8 @@ tic
 N = 1e6;
 eta = 4;
 % User distance
-d1 = 20;
-d2 = 70;
+d1 = 400;
+d2 = 900;
 
 % Rayleigh fading channel
 h1 = sqrt(1/2*d1^-eta)*(randn(1,N)+1i*randn(1,N));
@@ -24,8 +24,8 @@ M1 = 300;
 M2 = 300;
 M = 300;
 
-N1 = 80;
-N2 = 80;
+N1 = 256;
+N2 = 256;
 
 w1 = 2^(N1/M1)-1;
 w2 = 2^(N2/M2)-1;
@@ -39,7 +39,7 @@ nu_2 = w2 - (1/(2*sqrt(M2)*Xi_2));
 tau_2 = w2 + (1/(2*sqrt(M2)*Xi_2));
 
 % Transmit power in dBm
-Pt = -10:2:10;                
+Pt = 0:2:30;                
 % Pt = -113:2:-74;
 % Transmit power in linear scale
 pt = (10^-3)*10.^(Pt/10);

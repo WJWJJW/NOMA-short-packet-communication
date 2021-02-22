@@ -1,11 +1,11 @@
 clc; clear variables; close all;
 N = 1e6; % number of channel tap
 ncluster = 5:20;  % number of cluster (number of user  = 2K)
-NN = 80; % number of information bit
+NN = 256; % number of information bit
 N1 = NN;
 N2 = NN;
 
-NNN = 10000; % number of Monte Carlo
+NNN = 1000; % number of Monte Carlo
 
 eplsion1R = 10^-5;
 eplsion2R = 10^-4;
@@ -28,12 +28,6 @@ sum_UPG_opt_M_j = zeros(NNN,length(ncluster));
 sum_HAP_opt_M_j = zeros(NNN,length(ncluster));
 
 
-sum_RP_opt_M = zeros(1,length(ncluster));
-sum_UPG_opt_M = zeros(1,length(ncluster));
-sum_HAP_opt_M = zeros(1,length(ncluster));
-
-
-
 for u=1:length(ncluster)
     for jj=1:NNN
         h = (randn(1,N)+1i*randn(1,N));
@@ -51,23 +45,17 @@ for u=1:length(ncluster)
         user_distance = sort(user_distance);
 
         % User Pre-Grouping
-        [sum_UPG_opt_M_j(jj,u), ~, U] =...
-            UPG_opt_delta(user_distance, NN, K, eplsion1R, eplsion2R, rho, eta, lamda, delta);
+        [sum_UPG_opt_M_j(jj,u), ~, ~] =...
+            UPG_opt_delta(user_distance, NN, K, eplsion1R, eplsion2R, rho, eta, lamda);
         
         
         % Random Paring (RP)
         [sum_RP_opt_M_j(jj,u), ~, ~]=...
-            RP(user_distance, NN, K, eplsion1R, eplsion2R, rho, eta, lamda, delta);
-
+            RP(user_distance, NN, K, eplsion1R, eplsion2R, rho, eta, lamda);
 
         % Hungarian Algorithm Pairing
-        [sum_HAP_opt_M_j(jj,u), ~, H] =...
-            HAP(user_distance, NN, K, eplsion1R, eplsion2R, rho, eta, lamda, delta);
-        
-%         U
-%         sum_UPG_opt_M_j(jj,u)
-%         H
-%         sum_HAP_opt_M_j(jj,u)
+        [sum_HAP_opt_M_j(jj,u), ~, ~] =...
+            HAP(user_distance, NN, K, eplsion1R, eplsion2R, rho, eta, lamda);
        
     end
 end
@@ -85,6 +73,8 @@ hold on; grid on;
 plot(ncluster, sum_HAP_opt_M,'Color',[1 0.5 0]);
 plot(ncluster, sum_RP_opt_M,'r');
 
-
-ylabel('blocklength');
+xlabel('Number of cluster');
+ylabel('Blocklength (Channel uses)');
 legend('User Pre-Grouping', 'Hungarian Algorithm Pairing', 'Random Pairing');
+
+set(gca, 'FontName', 'Times New Roman');

@@ -5,26 +5,29 @@
 
 clc; clear variables; close all;
 N = 1e6;
-N1 = 80;
-N2 = 80;
+N1 = 256;
+N2 = 256;
 
 eplsion1R = 10^-5;
 eplsion2R = 10^-4;
 
-Pt = 20;                    %Transmit Power in dBm
+Pt = 30;                    %Transmit Power in dBm
 pt = (10^-3)*db2pow(Pt);    %Transmit Power (linear scale)
 
-BW = 10^7;                  %System bandwidth
-No = -174 + 10*log10(BW);   %Noise power (dBm)
+% AWGN noise
+% BW = 10^6;                  %System bandwidth
+% No = -174 + 10*log10(BW);   %Noise power (dBm)
+% no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
+No = -100;
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
 rho = pt/ no;
 
 eta = 4;
 
-d1 = 50;
+d1 = 100;
 
-d2 = 50:1:150;
+d2 = 101:1:300;
 check1 = zeros(length(d2),1);
 check2 = zeros(length(d2),1);
 
@@ -103,9 +106,9 @@ D2_sol2 = vpasolve(eqn_constraint2, D2);
 %         - 1/log2(1+((-1+sqrt(1+4*delta^2*rho*lamda1*eplsion1R*(1-delta))) / (2*delta))) == 0;
 
 
-eqn_OMA = (beta1*log(1+(eplsion1R*lamda1*rho1))+beta2*log(1+(eplsion2R*(D2)^(-eta)*rho2)))...
-        *(log(1+((-1+sqrt(1+4*delta^2*rho*lamda1*eplsion1R*(1-delta))) / (2*delta))))...
-        - beta1*log(1+(eplsion1R*lamda1*rho1))*beta2*log(1+(eplsion2R*(D2)^(-eta)*rho2)) == 0
+% eqn_OMA = (beta1*log(1+(eplsion1R*lamda1*rho1))+beta2*log(1+(eplsion2R*(D2)^(-eta)*rho2)))...
+%         *(log(1+((-1+sqrt(1+4*delta^2*rho*lamda1*eplsion1R*(1-delta))) / (2*delta))))...
+%         - beta1*log(1+(eplsion1R*lamda1*rho1))*beta2*log(1+(eplsion2R*(D2)^(-eta)*rho2)) == 0
 
 
 % eqn_OMA = (eplsion1R*lamda1 + eplsion2R*(D2)^(-eta)) * ((-1+sqrt(1+4*delta^2*rho*lamda1*eplsion1R*(1-delta))) / (2*delta)) ...
@@ -114,7 +117,7 @@ eqn_OMA = (beta1*log(1+(eplsion1R*lamda1*rho1))+beta2*log(1+(eplsion2R*(D2)^(-et
 % eqn_OMA = 4*delta*(1-delta)*(eplsion1R*lamda1 + eplsion2R*(D2)^(-eta))^2 == ...
 %             eplsion2R*(D2)^(-eta)*(delta*rho*eplsion1R*lamda1*eplsion2R*(D2)^(-eta)+2*(eplsion1R*lamda1 + eplsion2R*(D2)^(-eta)));
 
-D2_sol3 = abs(vpasolve(eqn_OMA, D2))
+% D2_sol3 = abs(vpasolve(eqn_OMA, D2))
 
 term1 = beta1*log(1+eplsion1R*lamda1*rho1);
 term2 = log(1+((-1+sqrt(1+4*delta^2*rho*lamda1*eplsion1R*(1-delta))) / (2*delta)))
@@ -125,21 +128,23 @@ plot(d2, opt_M, 'b');
 hold on; grid on;
 plot(d2, OMA_opt_M, 'r');
 
-ylabel('blocklength');
+ylabel('Blocklength (Channel uses)');
 
 
-legend('NOMA','OMA');
+legend('NOMA: Blocklength by Eq.(36)','OMA: Blocklength by Sum of Eq.(42)');
     
 % xline(double(D2_sol1(2)),'-','Threshold1');
-xline(double(D2_sol2(2)),'-.','0.5 bound');
+xx = xline(double(D2_sol2(2)),'-.','Bound (38)','HandleVisibility','off');
+xx.FontName = 'Times New Roman';
 
 % xline(double(min_d2),'-.','Bound1');
 % xline(double(min_d22),'-.','Bound2');
 
 
-xline(double(D2_sol1(2)),'-','D2 asym');
-xline(d2_min_thred,'-','D2 min');
-xlabel('user 2 distance');
+% xline(double(D2_sol1(2)),'-','D2 asym');
+xxx = xline(d2_min_thred,'-','Performance Bound','HandleVisibility','off');
+xxx.FontName = 'Times New Roman';
+xlabel('Distance of far user (meter)');
 
-
+set(gca, 'FontName', 'Times New Roman');
 

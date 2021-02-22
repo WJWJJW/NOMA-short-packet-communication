@@ -1,21 +1,24 @@
-% This script analysis performance between NOMA OMA
+% This script analysis performance between NOMA and OMA
 % 2 user case
 clc; clear variables; close all;
 N = 1e6;
-N1 = 80;
-N2 = 80;
+N1 = 256;
+N2 = 256;
 
 
 eplsion1R = 10^-5;
 eplsion2R = 10^-4;
 
 
-BW = 10^7;                  %System bandwidth
-No = -174 + 10*log10(BW);   %Noise power (dBm)
+% AWGN noise
+% BW = 10^6;                  %System bandwidth
+% No = -174 + 10*log10(BW);   %Noise power (dBm)
+% no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
+No = -100;
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
-d1 = 100;
-d2 = 175;
+d1 = 24;
+d2 = 245;
 eta = 4;
 
 h1 = sqrt(1/2*d1^-eta)*(randn(1,N)+1i*randn(1,N));
@@ -29,7 +32,7 @@ lamda1 = mean(abs(h1).^2);
 lamda2 = mean(abs(h2).^2);
 
 
-Pt = 0:1:20;                    %Transmit Power in dBm
+Pt = 20:1:30;                    %Transmit Power in dBm
 pt = (10^-3).*db2pow(Pt);    %Transmit Power (linear scale)
 
 beta1 = 0.5;
@@ -98,17 +101,19 @@ end
 
 
 figure(1)
-plot(Pt, NOMA_opt_M, 'b', 'linewidth', 1.5);
+plot(Pt, NOMA_opt_M, 'b');
 hold on; grid on;
-plot(Pt, OMA_opt_M, 'r', 'linewidth', 1.5);
+plot(Pt, OMA_opt_M, 'r');
+plot(Pt, OMA_opt_M - NOMA_opt_M, 'g');
 % plot(Pt, OMA_opt_M_appro, 'g', 'linewidth', 1.5);
 
-xlabel('Transmit power (dBm)');
-ylabel('M');
-title('Required blocklength vs Transmit Power');
-legend('NOMA','OMA');
+xlabel('Transmitted power (dBm)');
+ylabel('Blocklength (Channel uses)');
+% title('Required blocklength vs Transmit Power');
+legend('NOMA: Blocklength by Eq.(36)','OMA: Blocklength by Sum of Eq.(42)', ...
+        'Performance Gap');
 
-
+set(gca, 'FontName', 'Times New Roman');
 
 % figure(2)
 % plot(Pt, NOMA_opt_M, 'b', 'linewidth', 1.5);

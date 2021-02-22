@@ -57,13 +57,13 @@ for u=1:length(Pt)
     lamda = mean(abs(h).^2);
     % Exhaustive Paring (EP)
     [sum_EP_opt_M(u), EP_opt_M(:,u), Exhaustive_pairing(:,:,u)]=...
-        EP(exhaustive_pairing, NN, K, eplsion1R, eplsion2R, rho(u), eta, lamda, delta);
+        EP(exhaustive_pairing, NN, K, eplsion1R, eplsion2R, rho(u), eta, lamda);
     % User Pre-Grouping
     [sum_UPG_opt_M(u), UPG_opt_M(:,u), User_pre_grouping(:,:,u)] =...
-        UPG(user_distance, NN, K, eplsion1R, eplsion2R, rho(u), eta, lamda, delta);
+        UPG_opt_delta(user_distance, NN, K, eplsion1R, eplsion2R, rho(u), eta, lamda);
     % User Pre-Grouping NLUPA
     [sum_NLUPA_opt_M(u), NULPA_opt_M(:,u), User_pre_grouping_NLUPA(:,:,u)] =...
-        UPG_NLUPA(user_distance, NN, K, eplsion1R, eplsion2R, rho(u), eta, lamda, delta);
+        UPG_NLUPA(user_distance, NN, K, eplsion1R, eplsion2R, rho(u), eta, lamda);
 end
 
 
