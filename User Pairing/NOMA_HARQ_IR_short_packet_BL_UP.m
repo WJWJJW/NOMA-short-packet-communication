@@ -14,8 +14,11 @@ eplsion2R = 10^-4;
 Pt = 20:2:30;               %Transmit Power in dBm
 pt = (10^-3).*db2pow(Pt);    %Transmit Power (linear scale)
 
-BW = 10^7;                  %System bandwidth
-No = -174 + 10*log10(BW);   %Noise power (dBm)
+% AWGN
+% BW = 10^7;                  %System bandwidth
+% No = -174 + 10*log10(BW);   %Noise power (dBm)
+% no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
+No = -100;
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
 rho = pt./ no;
