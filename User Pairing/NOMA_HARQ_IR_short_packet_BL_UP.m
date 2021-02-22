@@ -47,10 +47,10 @@ sum_UPG_opt_M_j = zeros(NNN,length(Pt));
 sum_NLUPA_opt_M_j = zeros(NNN,length(Pt));
 sum_HAP_opt_M_j = zeros(NNN,length(Pt));
 
-sum_OMA_opt_M_a_j = zeros(1,length(Pt));
-sum_OMA_opt_M_b_j = zeros(1,length(Pt));
-sum_OMA_opt_M_c_j = zeros(1,length(Pt));
-sum_OMA_opt_M_d_j = zeros(1,length(Pt));
+sum_OMA_opt_M_a_j = zeros(NNN,length(Pt));
+sum_OMA_opt_M_b_j = zeros(NNN,length(Pt));
+sum_OMA_opt_M_c_j = zeros(NNN,length(Pt));
+sum_OMA_opt_M_d_j = zeros(NNN,length(Pt));
 
 
 EP_opt_M = zeros(K,length(Pt));
