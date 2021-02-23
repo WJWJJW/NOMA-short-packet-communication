@@ -1,7 +1,7 @@
 clc; clear variables; close all;
 tic
 % Basic setting
-N = 1e7;
+N = 1e6;
 eta = 4;
 % User distance
 d1 = 100;
