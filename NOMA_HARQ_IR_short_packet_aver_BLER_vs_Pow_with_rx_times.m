@@ -23,8 +23,8 @@ No = -100;
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
 % Parameter setting
-M1 = [200 400 600];
-M2 = [200 400 600];
+M1 = [300 600];
+M2 = [300 600];
 N1 = 256;
 N2 = 256;
 
@@ -128,8 +128,8 @@ semilogy(Pt, mean(q12(1,:,:),3)+(1-mean(q12(1,:,:),3)).*mean(q11(1,:,:),3),'b');
 semilogy(Pt, mean(q2(2,:,:),3),'--r');
 semilogy(Pt, mean(q12(2,:,:),3)+(1-mean(q12(2,:,:),3)).*mean(q11(2,:,:),3),'--b');
 
-semilogy(Pt, mean(q2(3,:,:),3),'-.r');
-semilogy(Pt, mean(q12(3,:,:),3)+(1-mean(q12(3,:,:),3)).*mean(q11(3,:,:),3),'-.b'    );
+% semilogy(Pt, mean(q2(3,:,:),3),'-.r');
+% semilogy(Pt, mean(q12(3,:,:),3)+(1-mean(q12(3,:,:),3)).*mean(q11(3,:,:),3),'-.b');
 
 semilogy(Pt, Epsilon2(1,:),'*r');
 semilogy(Pt, Epsilon1(1,:),'*b');
@@ -141,10 +141,10 @@ semilogy(Pt, Epsilon1(2,:),'*b');
 semilogy(Pt, epsilon2_high_SNR(2,:),'or');
 semilogy(Pt, epsilon1_high_SNR(2,:),'ob');
 
-semilogy(Pt, Epsilon2(3,:),'*r');
-semilogy(Pt, Epsilon1(3,:),'*b');
-semilogy(Pt, epsilon2_high_SNR(3,:),'or');
-semilogy(Pt, epsilon1_high_SNR(3,:),'ob');
+% semilogy(Pt, Epsilon2(3,:),'*r');
+% semilogy(Pt, Epsilon1(3,:),'*b');
+% semilogy(Pt, epsilon2_high_SNR(3,:),'or');
+% semilogy(Pt, epsilon1_high_SNR(3,:),'ob');
 
 % title('BLER vs Transmit Power');
 xlabel('Transmit Power (dBm)');
@@ -168,6 +168,13 @@ an3.FontName = 'Times New Roman';
 cn1 = annotation('ellipse',[.84 .68 .05 .05])
 cn2 = annotation('ellipse',[.84 .68 .05 .05])
 cn3 = annotation('ellipse',[.84 .68 .05 .05])
+
+dim = [0.15 0.5 0.005 0.01];
+str = {'Line : Simulation',...
+       'Circle : (14)',...
+       'Star : (23) and (24)'};
+an4 = annotation('textbox',dim,'String',str,'FitBoxToText','on');
+an4.FontName = 'Times New Roman';
 
 legend('Far user','Near user');
 

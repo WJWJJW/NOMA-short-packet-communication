@@ -8,8 +8,8 @@ N = 1e7;
 N1 = 256;
 N2 = 256;
 
-eplsion1R = 10^-5;
-eplsion2R = 10^-4;
+eplsion1R = 10^-4;
+eplsion2R = 10^-5;
 
 % Tx power
 Pt = 30;                    %Transmit Power in dBm
@@ -79,7 +79,7 @@ hold on; grid on;
 yline(0.5,'-');
 
 ylabel('\alpha_1');
-axis([-inf inf 0 1]);
+axis([-inf inf 0 0.1]);
 
 yyaxis right
 plot(d2, real(opt_M), 'Color',[1 0.5 0]);
@@ -92,8 +92,8 @@ ylabel('Blocklength (Channel uses)');
 legend('\alpha_1^{opt}','M_{opt}^{1 pair}');
     
 % xline(double(D2_sol1(2)),'-','Threshold1');
-xx = xline(double(D2_sol2(2)),'-.','Bound (38)','HandleVisibility','off');
-xx.FontName = 'Times New Roman';
+% % xx = xline(double(D2_sol2(2)),'-.','Bound (38)','HandleVisibility','off');
+% xx.FontName = 'Times New Roman';
 % xline(pair_d2_UPG,'--','PairUPG d_2');
 % xline(pair_d2_EP,'--','PairEP d_2');
 % axis([-inf inf 0 2000]);
