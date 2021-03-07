@@ -1,8 +1,8 @@
 clc; clear variables; close all;
 
 N = 1e6; % number of channel tap
-NNN = 10000; % number of Monte Carlo
-K = 5;  % number of cluster (number of user  = 2K)
+NNN = 1000; % number of Monte Carlo
+K = 5  % number of cluster (number of user  = 2K)
 NN = 256; % number of information bit
 N1 = NN;
 N2 = NN;
@@ -29,6 +29,9 @@ eta = 4;
 
 pair_idx_tmp = paircombs(2*K);
 pair_idx = 2*K+1-fliplr(pair_idx_tmp);
+pair_idx = reshape((pair_idx)',2,K,length(pair_idx));
+pair_idx = sort(permute(pair_idx,[2 1 3]),2);
+
 
 
 Exhaustive_pairing = zeros(K,2,length(Pt));
@@ -36,12 +39,15 @@ RP_user_pairing = zeros(K,2,length(Pt));
 User_pre_grouping = zeros(K,2,length(Pt));
 User_pre_grouping_NLUPA = zeros(K,2,length(Pt));
 Hungarian_pairing = zeros(K,2,length(Pt));
+Simulated_Anealing_Pairing = zeros(K,2,length(Pt));
+
 
 sum_EP_opt_M_j = zeros(NNN,length(Pt));
 sum_RP_opt_M_j = zeros(NNN,length(Pt));
 sum_UPG_opt_M_j = zeros(NNN,length(Pt));
 sum_NLUPA_opt_M_j = zeros(NNN,length(Pt));
 sum_HAP_opt_M_j = zeros(NNN,length(Pt));
+sum_SAP_opt_M_j = zeros(NNN,length(Pt));
 
 sum_OMA_opt_M_j = zeros(NNN,length(Pt));
 
@@ -51,21 +57,22 @@ RP_opt_M = zeros(K,length(Pt));
 UPG_opt_M = zeros(K,length(Pt));
 NULPA_opt_M = zeros(K, length(Pt));
 HAP_opt_M = zeros(K, length(Pt));
+SAP_opt_M = zeros(K, length(Pt));
 
 parfor u=1:length(Pt)
     for jj = 1:NNN
         h = (randn(1,N)+1i*randn(1,N));
         lamda = mean(abs(h).^2);
         % Generate user randomly
-        user_distance = randi([10 330],1,2*K);
+        user_distance = randi([50 300],1,2*K);
         user_distance = sort(user_distance);
         
         % Draw target BLER between 1e-5 and 1e-4 randomly
-        target_BLER = (1e-4 - 1e-5).*rand(1,2*K) + 1e-5;
+        target_BLER = (1e-4 - 1e-8).*rand(1,2*K) + 1e-5;
         
         % Exhaustive Paring (EP)
-        exhaustive_pairing = reshape(user_distance(pair_idx)',K,2,length(pair_idx));
-        target_BLER_EP = reshape(target_BLER(pair_idx)',K,2,length(pair_idx));
+        exhaustive_pairing = user_distance(pair_idx);
+        target_BLER_EP = target_BLER(pair_idx);
         
         [sum_EP_opt_M_j(jj,u), EP_opt_M(:,u), Exhaustive_pairing(:,:,u)]=...
             EP(exhaustive_pairing, NN, K, target_BLER_EP, rho(u), eta, lamda);
@@ -86,6 +93,10 @@ parfor u=1:length(Pt)
         [sum_HAP_opt_M_j(jj,u), HAP_opt_M(:,u), Hungarian_pairing(:,:,u)] =...
             HAP(user_distance, NN, K, target_BLER, rho(u), eta, lamda);
         
+        % Simulated Annealing Pairing (SAP)
+        [sum_SAP_opt_M_j(jj,u), SAP_opt_M(:,u), Simulated_Anealing_Pairing(:,:,u)] =...
+            SAP(user_distance, NN, K, target_BLER, rho(u), eta, lamda);
+        
         % OMA 
         [sum_OMA_opt_M_j(jj,u),~] = ...
             OMA(user_distance, NN, K, target_BLER, rho(u), beta, OMA_PA, eta, lamda);
@@ -99,11 +110,9 @@ sum_RP_opt_M = mean(sum_RP_opt_M_j);
 sum_UPG_opt_M = mean(sum_UPG_opt_M_j);
 sum_NLUPA_opt_M = mean(sum_NLUPA_opt_M_j);
 sum_HAP_opt_M = mean(sum_HAP_opt_M_j);
+sum_SAP_opt_M = mean(sum_SAP_opt_M_j);
 
-sum_OMA_opt_M_a = mean(sum_OMA_opt_M_a_j);
-sum_OMA_opt_M_b = mean(sum_OMA_opt_M_b_j);
-sum_OMA_opt_M_c = mean(sum_OMA_opt_M_c_j);
-sum_OMA_opt_M_d = mean(sum_OMA_opt_M_d_j);
+sum_OMA_opt_M = mean(sum_OMA_opt_M_j);
 
 % % Save variable
 % path_str = ['C:\Users\eric7\Desktop\WeiJie\Thesis\Thesis Result\UPdata_0218'];
@@ -115,25 +124,34 @@ sum_OMA_opt_M_d = mean(sum_OMA_opt_M_d_j);
 
 figure (1)
 
-plot(Pt, sum_RP_opt_M,'b');
+plot(Pt, sum_RP_opt_M,'--b');
 hold on; grid on;
-plot(Pt, sum_UPG_opt_M, 'Color',[1 0.5 0]);
-plot(Pt, sum_NLUPA_opt_M, 'm');
-plot(Pt, sum_EP_opt_M, 'ro');
-plot(Pt, sum_HAP_opt_M, 'g*');
+plot(Pt, sum_UPG_opt_M, 'o', 'Color',[1 0.5 0]);
+plot(Pt, sum_NLUPA_opt_M, '-+m');
+plot(Pt, sum_EP_opt_M, 'r');
+plot(Pt, sum_HAP_opt_M, '.g');
+plot(Pt, sum_SAP_opt_M, 's', 'Color', [0.3010 0.7450 0.9330]);
+plot(Pt,sum_OMA_opt_M,'c');
 
-plot(Pt,sum_OMA_opt_M_a,'c');
-plot(Pt,sum_OMA_opt_M_b,'*c');
-plot(Pt,sum_OMA_opt_M_c,'oc');
 
 xlabel('Transmitted power (dBm)');
 ylabel('Blocklength (Channel use)');
 legend('Random Pairing','User Pre-Grouping', 'User Pre-Grouping NLUPA', ...
         'Exhaustive Paring', 'Hungarian Pairing',...
+        'Simulated Annealing Pairing',...
         'OMA');
 set(gca, 'FontName', 'Times New Roman'); 
 
-
+% create a new pair of axes inside current figure
+axes('position',[.65 .175 .25 .25])
+box on % put box around new pair of axes
+indexOfInterest = 1:3;
+plot(Pt(indexOfInterest), sum_UPG_opt_M(indexOfInterest), 'o', 'Color',[1 0.5 0]);
+hold on; grid on;
+% plot(Pt(indexOfInterest), sum_NLUPA_opt_M(indexOfInterest), '-+m');
+plot(Pt(indexOfInterest), sum_EP_opt_M(indexOfInterest), 'r');
+plot(Pt(indexOfInterest), sum_HAP_opt_M(indexOfInterest), '.g');
+plot(Pt(indexOfInterest), sum_SAP_opt_M(indexOfInterest), 's', 'Color', [0.3010 0.7450 0.9330]);
 
 % name_str = ['UP_test_' num2str(NNN) 'times.png'];
 % saveas(gcf,name_str);

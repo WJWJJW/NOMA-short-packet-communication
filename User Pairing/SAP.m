@@ -1,13 +1,14 @@
 % Simulated Annealing Pairing (SAP)
-function [sum_opt_M, opt_M, Simulated_Anealing_Pairing]=SAP(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda, delta)
+function [sum_opt_M, opt_M, Simulated_Anealing_Pairing]=SAP(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda)
     % Initialization
-    Temperature = 50;
+    Temperature = 100;
     Temperature_min = 0.0001;
-    annealing_factor = 0.9; 
-    Time_budget = 100;
+    annealing_factor = 0.999; 
+    Time_budget = 10000;
     cur_time = 0;
     % RP and calculate blocklength as current optimum blocklength
-    [sum_opt_M, opt_M, cur_combinition] = RP(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda, delta);
+    [sum_opt_M, opt_M, cur_combinition] = ...
+        RP(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda);
                                     
     while 1
         % Time update
@@ -29,7 +30,7 @@ function [sum_opt_M, opt_M, Simulated_Anealing_Pairing]=SAP(user_distance, N, K,
         tmp_sum = sum_opt_M - opt_M(diff_idx(1)) - opt_M(diff_idx(2));
         
         % calculate sum of changing pair
-        [sum_nei_opt_M, nei_opt_M] = M_cal(N, neighbor, 2,eplsion1R,eplsion2R,rho,eta,lamda, delta);
+        [sum_nei_opt_M, nei_opt_M] = M_cal_Mod(N, neighbor, 2,eplsion1R,eplsion2R,rho,eta,lamda);
         sum_nei_opt_M = tmp_sum + sum_nei_opt_M;
         
         % Find the solution for this iteration

@@ -17,8 +17,8 @@ eplsion2R = 10^-4;
 No = -100;
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
-d1 = 24;
-d2 = 245;
+d1 = 100;
+d2 = 250;
 eta = 4;
 
 h1 = sqrt(1/2*d1^-eta)*(randn(1,N)+1i*randn(1,N));

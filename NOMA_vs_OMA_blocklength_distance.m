@@ -31,17 +31,17 @@ d2 = 101:1:300;
 check1 = zeros(length(d2),1);
 check2 = zeros(length(d2),1);
 
-delta = 1/2;
+
 beta1 = 1/2;
 beta2 = 1-beta1;
 
 h1 = sqrt(1/2*d1^-eta)*(randn(1,N)+1i*randn(1,N));
 lamda1 = mean(abs(h1).^2);
+[delta] = delta_finder (lamda1*rho*eplsion1R);
 
 for dd=1:length(d2)
     h2 = sqrt(1/2*d2(dd)^-eta)*(randn(1,N)+1i*randn(1,N));
     lamda2 = mean(abs(h2).^2);
-    
     contraint(dd) = (lamda1*eplsion1R)/(lamda2*eplsion2R);
     k = contraint(dd)*delta;
    
@@ -142,7 +142,7 @@ xx.FontName = 'Times New Roman';
 
 
 % xline(double(D2_sol1(2)),'-','D2 asym');
-xxx = xline(d2_min_thred,'-','Performance Bound','HandleVisibility','off');
+xxx = xline(d2_min_thred,'-','Performance Bound by Thm. 4','HandleVisibility','off');
 xxx.FontName = 'Times New Roman';
 xlabel('Distance of far user (meter)');
 
