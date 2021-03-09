@@ -69,7 +69,7 @@ parfor u=1:length(Pt)
         
         % Draw target BLER between 1e-5 and 1e-4 randomly
         target_BLER = (1e-4 - 1e-8).*rand(1,2*K) + 1e-5;
-        
+
         % Exhaustive Paring (EP)
         exhaustive_pairing = user_distance(pair_idx);
         target_BLER_EP = target_BLER(pair_idx);
