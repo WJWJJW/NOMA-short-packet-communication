@@ -36,6 +36,9 @@ sum_OMA_opt_M_j = zeros(NNN,length(ncluster));
 sum_NLUPA_opt_M_j = zeros(NNN,length(ncluster));
 sum_SAP_opt_M_j = zeros(NNN,length(ncluster));
 
+sum_En_UPG_opt_M_j = zeros(NNN,length(Pt));
+sum_En_HAP_opt_M_j = zeros(NNN,length(Pt));
+
 parfor u=1:length(ncluster)
     for jj=1:NNN
         h = (randn(1,N)+1i*randn(1,N));
@@ -77,6 +80,14 @@ parfor u=1:length(ncluster)
         [sum_OMA_opt_M_j(jj,u),~] = ...
             OMA(user_distance, NN, K, target_BLER, rho, beta, OMA_PA, eta, lamda);
         
+        % Enhanced Hungarian Algorithm Pairing
+        [sum_En_HAP_opt_M_j(jj,u), ~, ~] =...
+            En_HAP(user_distance, NN, K, target_BLER, rho, eta, lamda);
+        
+        % Enhanced User Pre-Grouping
+        [sum_En_UPG_opt_M_j(jj,u), ~, ~] =...
+            En_UPG_opt_delta(user_distance, NN, K, target_BLER, rho, eta, lamda);
+        
     end
 end
 
@@ -88,29 +99,40 @@ sum_OMA_opt_M = mean(sum_OMA_opt_M_j);
 sum_NLUPA_opt_M = mean(sum_NLUPA_opt_M_j);
 sum_SAP_opt_M = mean(sum_SAP_opt_M_j);
 
+sum_En_UPG_opt_M = mean(sum_En_UPG_opt_M_j);
+sum_En_HAP_opt_M = mean(sum_En_HAP_opt_M_j);
 
-RP_CDF = min(sum_RP_opt_M/sum_HAP_opt_M(14),1);
-UPG_CDF = min(sum_UPG_opt_M/sum_HAP_opt_M(14),1);
-HAP_CDF = min(sum_HAP_opt_M/sum_HAP_opt_M(14),1);
-OMA_CDF = min(sum_OMA_opt_M/sum_HAP_opt_M(14),1);
-NLUPA_CDF = min(sum_NLUPA_opt_M/sum_HAP_opt_M(14),1);
-SAP_CDF = min(sum_SAP_opt_M/sum_HAP_opt_M(14),1);
+total_resource = 35000;
+
+RP_CDF = min(sum_RP_opt_M/total_resource,1);
+UPG_CDF = min(sum_UPG_opt_M/total_resource,1);
+HAP_CDF = min(sum_HAP_opt_M/total_resource,1);
+OMA_CDF = min(sum_OMA_opt_M/total_resource,1);
+NLUPA_CDF = min(sum_NLUPA_opt_M/total_resource,1);
+SAP_CDF = min(sum_SAP_opt_M/total_resource,1);
+
+En_UPG_CDF = min(sum_En_UPG_opt_M/total_resource,1);
+En_HAP_CDF = min(sum_En_HAP_opt_M/total_resource,1);
 
 figure (1)
 
-plot(ncluster, sum_UPG_opt_M,'Color',[1 0.5 0]);
+plot(ncluster, sum_UPG_opt_M,'o','Color',[1 0.5 0]);
 hold on; grid on;
 plot(ncluster, sum_NLUPA_opt_M, 'm');
-plot(ncluster, sum_HAP_opt_M, 'g*');
+plot(ncluster, sum_HAP_opt_M, '.g');
 plot(ncluster, sum_RP_opt_M,'b');
 plot(ncluster, sum_OMA_opt_M,'c');
 plot(ncluster, sum_SAP_opt_M,'r');
+
+plot(ncluster, sum_En_UPG_opt_M, '--', 'Color',[1 0.5 0]);
+plot(ncluster, sum_En_HAP_opt_M, '--g');
 
 xlabel('Number of Cluster');
 ylabel('Blocklength (Channel uses)');
 legend('User Pre-Grouping', 'User Pre-Grouping NLUPA',...
     'Hungarian Algorithm Pairing', 'Random Pairing', 'OMA',...
-    'Simulated Annealing Pairing');
+    'Simulated Annealing Pairing', 'Enhanced User Pre-Grouping',...
+    'Enhanced Hungarian Algorithm Pairing');
 
 set(gca, 'FontName', 'Times New Roman');
 
@@ -124,10 +146,29 @@ plot(10:2:40, HAP_CDF, '-.g');
 plot(10:2:40, SAP_CDF, '-s', 'Color', [0.3010 0.7450 0.9330]);
 plot(10:2:40,OMA_CDF,'c');
 
+plot(10:2:40, En_UPG_CDF, '--', 'Color',[1 0.5 0]);
+plot(10:2:40, En_HAP_CDF, '--g');
+
 
 xlabel('Number of User');
 ylabel('CDF');
 legend('Random Pairing', 'User Pre-Grouping', 'User Pre-Grouping NLUPA',...
-    'Hungarian Algorithm Pairing', 'Simulated Annealing Pairing', 'OMA');
+    'Hungarian Algorithm Pairing', 'Simulated Annealing Pairing', 'OMA',...
+    'Enhanced User Pre-Grouping','Enhanced Hungarian Algorithm Pairing');
 
 set(gca, 'FontName', 'Times New Roman');
+
+
+% create a new pair of axes inside current figure
+axes('position',[.65 .175 .25 .25])
+box on % put box around new pair of axes
+indexOfInterest = 30:2:34;
+plot(indexOfInterest, UPG_CDF(11:13), '-o', 'Color',[1 0.5 0]);
+hold on; grid on;
+plot(indexOfInterest, HAP_CDF(11:13), '-.g');
+plot(indexOfInterest, SAP_CDF(11:13), '-s', 'Color', [0.3010 0.7450 0.9330]);
+
+plot(indexOfInterest, En_UPG_CDF(11:13), '--', 'Color',[1 0.5 0]);
+plot(indexOfInterest, En_HAP_CDF(11:13), '--g');
+
+

@@ -29,7 +29,7 @@ eta = 4;
 
 pair_idx_tmp = paircombs(2*K);
 pair_idx = 2*K+1-fliplr(pair_idx_tmp);
-pair_idx = reshape((pair_idx)',2,K,length(pair_idx));
+pair_idx = reshape((pair_idx)',2,K,size(pair_idx,1));
 pair_idx = sort(permute(pair_idx,[2 1 3]),2);
 
 
@@ -40,6 +40,8 @@ User_pre_grouping = zeros(K,2,length(Pt));
 User_pre_grouping_NLUPA = zeros(K,2,length(Pt));
 Hungarian_pairing = zeros(K,2,length(Pt));
 Simulated_Anealing_Pairing = zeros(K,2,length(Pt));
+En_User_pre_grouping = zeros(K,2,length(Pt));
+En_Hungarian_pairing = zeros(K,2,length(Pt));
 
 
 sum_EP_opt_M_j = zeros(NNN,length(Pt));
@@ -48,6 +50,8 @@ sum_UPG_opt_M_j = zeros(NNN,length(Pt));
 sum_NLUPA_opt_M_j = zeros(NNN,length(Pt));
 sum_HAP_opt_M_j = zeros(NNN,length(Pt));
 sum_SAP_opt_M_j = zeros(NNN,length(Pt));
+sum_En_UPG_opt_M_j = zeros(NNN,length(Pt));
+sum_En_HAP_opt_M_j = zeros(NNN,length(Pt));
 
 sum_OMA_opt_M_j = zeros(NNN,length(Pt));
 
@@ -58,18 +62,22 @@ UPG_opt_M = zeros(K,length(Pt));
 NULPA_opt_M = zeros(K, length(Pt));
 HAP_opt_M = zeros(K, length(Pt));
 SAP_opt_M = zeros(K, length(Pt));
+En_UPG_opt_M = zeros(K,length(Pt));
+En_HAP_opt_M = zeros(K, length(Pt));
+
 
 parfor u=1:length(Pt)
     for jj = 1:NNN
         h = (randn(1,N)+1i*randn(1,N));
         lamda = mean(abs(h).^2);
         % Generate user randomly
-        user_distance = randi([50 300],1,2*K);
+        user_distance = randi([50 500],1,2*K);
         user_distance = sort(user_distance);
         
         % Draw target BLER between 1e-5 and 1e-4 randomly
         target_BLER = (1e-4 - 1e-8).*rand(1,2*K) + 1e-5;
-
+        
+        
         % Exhaustive Paring (EP)
         exhaustive_pairing = user_distance(pair_idx);
         target_BLER_EP = target_BLER(pair_idx);
@@ -100,6 +108,14 @@ parfor u=1:length(Pt)
         % OMA 
         [sum_OMA_opt_M_j(jj,u),~] = ...
             OMA(user_distance, NN, K, target_BLER, rho(u), beta, OMA_PA, eta, lamda);
+        
+        % Enhanced Hungarian Algorithm Pairing
+        [sum_En_HAP_opt_M_j(jj,u), En_HAP_opt_M(:,u), En_Hungarian_pairing(:,:,u)] =...
+            En_HAP(user_distance, NN, K, target_BLER, rho(u), eta, lamda);
+        
+        % Enhanced User Pre-Grouping
+        [sum_En_UPG_opt_M_j(jj,u), En_UPG_opt_M(:,u), En_User_pre_grouping(:,:,u)] =...
+            En_UPG_opt_delta(user_distance, NN, K, target_BLER, rho(u), eta, lamda);
           
     end
 end
@@ -111,6 +127,8 @@ sum_UPG_opt_M = mean(sum_UPG_opt_M_j);
 sum_NLUPA_opt_M = mean(sum_NLUPA_opt_M_j);
 sum_HAP_opt_M = mean(sum_HAP_opt_M_j);
 sum_SAP_opt_M = mean(sum_SAP_opt_M_j);
+sum_En_UPG_opt_M = mean(sum_En_UPG_opt_M_j);
+sum_En_HAP_opt_M = mean(sum_En_HAP_opt_M_j);
 
 sum_OMA_opt_M = mean(sum_OMA_opt_M_j);
 
@@ -131,6 +149,10 @@ plot(Pt, sum_NLUPA_opt_M, '-+m');
 plot(Pt, sum_EP_opt_M, 'r');
 plot(Pt, sum_HAP_opt_M, '.g');
 plot(Pt, sum_SAP_opt_M, 's', 'Color', [0.3010 0.7450 0.9330]);
+
+plot(Pt, sum_En_UPG_opt_M, '--', 'Color',[1 0.5 0]);
+plot(Pt, sum_En_HAP_opt_M, '--g');
+
 plot(Pt,sum_OMA_opt_M,'c');
 
 
@@ -139,6 +161,7 @@ ylabel('Blocklength (Channel use)');
 legend('Random Pairing','User Pre-Grouping', 'User Pre-Grouping NLUPA', ...
         'Exhaustive Paring', 'Hungarian Pairing',...
         'Simulated Annealing Pairing',...
+        'Enhanced User Pre-Grouping', 'Enhanced Hungarian Pairing',...
         'OMA');
 set(gca, 'FontName', 'Times New Roman'); 
 
@@ -152,6 +175,9 @@ hold on; grid on;
 plot(Pt(indexOfInterest), sum_EP_opt_M(indexOfInterest), 'r');
 plot(Pt(indexOfInterest), sum_HAP_opt_M(indexOfInterest), '.g');
 plot(Pt(indexOfInterest), sum_SAP_opt_M(indexOfInterest), 's', 'Color', [0.3010 0.7450 0.9330]);
+
+plot(Pt(indexOfInterest), sum_En_UPG_opt_M(indexOfInterest), '--', 'Color',[1 0.5 0]);
+plot(Pt(indexOfInterest), sum_En_HAP_opt_M(indexOfInterest), '--g');
 
 % name_str = ['UP_test_' num2str(NNN) 'times.png'];
 % saveas(gcf,name_str);

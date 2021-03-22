@@ -3,13 +3,13 @@ clc; clear variables; close all;
 
 
 N = 1e6; % number of Monte Carlo
-K = 7;  % number of cluster (number of user  = 2K)
+K = 5;  % number of cluster (number of user  = 2K)
 NN = 256; % number of information bit
 N1 = NN;
 N2 = NN;
 
 % Draw 2K number between 1e-5 and 1e-4 eandomly
-target_BLER = (1e-4 - 1e-5).*rand(1,2*K) + 1e-5
+% target_BLER = (1e-4 - 1e-5).*rand(1,2*K) + 1e-5
 
 Pt = 20:2:30;                    %Transmit Power in dBm
 pt = (10^-3).*db2pow(Pt);    %Transmit Power (linear scale)

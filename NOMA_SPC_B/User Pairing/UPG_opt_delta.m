@@ -2,6 +2,7 @@
 function [sum_opt_M, opt_M, User_pre_grouping] = UPG_opt_delta(user_distance, N, K, target_BLER, rho, eta, lamda)
     User_pre_grouping = zeros(K,2);
     target_BLER_pair = zeros(K,2);
+
     % Paring processing
     for ii=1:K
         User_pre_grouping(ii,1) = user_distance(ii);

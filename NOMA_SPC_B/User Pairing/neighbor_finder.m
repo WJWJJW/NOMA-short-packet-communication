@@ -11,8 +11,10 @@ function [neighbor_1_idx, neighbor_2_idx] = neighbor_finder(cur_combinition_idx,
     neighbor_1_idx = cur_combinition_idx;
     neighbor_1_idx([pair_idx(1) pair_idx(2)]) ...
         = neighbor_1_idx([pair_idx(2) pair_idx(1)]);
+    neighbor_1_idx = sort(neighbor_1_idx,2);
     % Neighbor 2
     neighbor_2_idx = cur_combinition_idx;
     neighbor_2_idx([pair_idx(1) pair_idx(2)+K]) ...
         = neighbor_2_idx([pair_idx(2)+K pair_idx(1)]);
+    neighbor_2_idx = sort(neighbor_2_idx,2);
 end

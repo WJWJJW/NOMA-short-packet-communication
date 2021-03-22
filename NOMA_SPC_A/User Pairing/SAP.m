@@ -1,14 +1,22 @@
 % Simulated Annealing Pairing (SAP)
-function [sum_opt_M, opt_M, Simulated_Anealing_Pairing]=SAP(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda)
+function [sum_opt_M, opt_M, Simulated_Anealing_Pairing]=SAP(user_distance, N, K, target_BLER, rho, eta, lamda)
     % Initialization
-    Temperature = 100;
+    Temperature = 50;
     Temperature_min = 0.0001;
-    annealing_factor = 0.999; 
-    Time_budget = 10000;
+    annealing_factor = 0.9; 
+    Time_budget = 100000;
     cur_time = 0;
     % RP and calculate blocklength as current optimum blocklength
-    [sum_opt_M, opt_M, cur_combinition] = ...
-        RP(user_distance, N, K, eplsion1R, eplsion2R, rho, eta, lamda);
+    RP_indices = randperm(2*K);
+    RP_indices = sort(reshape(RP_indices,K,2),2);
+    RP_user_pairing = user_distance(RP_indices);
+    target_BLER_pair = target_BLER(RP_indices);
+
+    
+    % Total blocklength for random pairing
+    [sum_opt_M, opt_M] = M_cal_Mod(N,RP_user_pairing, K, target_BLER_pair,rho,eta,lamda);
+    
+    cur_combinition_idx = RP_indices;
                                     
     while 1
         % Time update
@@ -18,29 +26,25 @@ function [sum_opt_M, opt_M, Simulated_Anealing_Pairing]=SAP(user_distance, N, K,
             break;
         end
         % Find neighbor
-        [neighbor_1, neighbor_2, diff_idx] = neighbor_finder(cur_combinition, K);
+        [neighbor_1_idx, neighbor_2_idx] = neighbor_finder(cur_combinition_idx, K);
         % Choose neighbor randomly
         if randi(2) == 1
-            neighbor = neighbor_1;
+            neighbor_idx = neighbor_1_idx;
         else
-            neighbor = neighbor_2;
+            neighbor_idx = neighbor_2_idx;
         end
 
-        % calculate sum of non-changing pair
-        tmp_sum = sum_opt_M - opt_M(diff_idx(1)) - opt_M(diff_idx(2));
-        
-        % calculate sum of changing pair
-        [sum_nei_opt_M, nei_opt_M] = M_cal_Mod(N, neighbor, 2,eplsion1R,eplsion2R,rho,eta,lamda);
-        sum_nei_opt_M = tmp_sum + sum_nei_opt_M;
+        % calculate blocklength of new combination
+        [sum_nei_opt_M, nei_opt_M] = ...
+               M_cal_Mod(N, user_distance(neighbor_idx), K,target_BLER(neighbor_idx),rho,eta,lamda);
         
         % Find the solution for this iteration
         % Better solution
         if  sum_nei_opt_M < sum_opt_M
             sum_opt_M = sum_nei_opt_M;
-            opt_M(diff_idx(1)) = nei_opt_M(1);
-            opt_M(diff_idx(2)) = nei_opt_M(2);
-            cur_combinition(diff_idx(1),:) = neighbor(1,:);
-            cur_combinition(diff_idx(2),:) = neighbor(2,:);
+            opt_M = nei_opt_M;
+            cur_combinition_idx = neighbor_idx;
+
         % Worse solution
         else
             delta_E = sum_opt_M - sum_nei_opt_M;
@@ -48,10 +52,8 @@ function [sum_opt_M, opt_M, Simulated_Anealing_Pairing]=SAP(user_distance, N, K,
             % Accept worse solution
             if exp(delta_E/Temperature) >= rn
                 sum_opt_M = sum_nei_opt_M;
-                opt_M(diff_idx(1)) = nei_opt_M(1);
-                opt_M(diff_idx(2)) = nei_opt_M(2);
-                cur_combinition(diff_idx(1),:) = neighbor(1,:);
-                cur_combinition(diff_idx(2),:) = neighbor(2,:);
+                opt_M = nei_opt_M;
+                cur_combinition_idx = neighbor_idx;
             end           
         end
         % Annealing
@@ -61,5 +63,5 @@ function [sum_opt_M, opt_M, Simulated_Anealing_Pairing]=SAP(user_distance, N, K,
         end
             
     end % End SAP
-    Simulated_Anealing_Pairing = cur_combinition;
+    Simulated_Anealing_Pairing = user_distance(cur_combinition_idx);
 end

@@ -8,8 +8,8 @@ N = 1e7;
 N1 = 256;
 N2 = 256;
 
-eplsion1R = 10^-4;
-eplsion2R = 10^-5;
+eplsion1R = 10^-5;
+eplsion2R = 10^-4;
 
 % Tx power
 Pt = 30;                    %Transmit Power in dBm
@@ -26,12 +26,12 @@ rho = pt/ no;
 
 eta = 4;
 
-d1 = 100;
+d1 = 99;
 % pair_d2_UPG = 188;
 % pair_d2_EP = 167;
 % diff = 10:2:300;
 % d2 = d1+diff;
-d2 = 120:2:300;
+d2 = 150:2:300;
 
 
 h1 = sqrt(1/2*d1^-eta)*(randn(1,N)+1i*randn(1,N));
@@ -79,7 +79,7 @@ hold on; grid on;
 yline(0.5,'-');
 
 ylabel('\alpha_1');
-axis([-inf inf 0 0.1]);
+axis([-inf inf 0 0.5]);
 
 yyaxis right
 plot(d2, real(opt_M), 'Color',[1 0.5 0]);
