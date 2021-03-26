@@ -6,8 +6,8 @@ N = 1e6;
 % Path loss exponent
 eta = 4;
 % User distance
-d1 = 400;
-d2 = 500;
+d1 = 100;
+d2 = 200;
 % Rayleigh fading channel
 h1 = sqrt(1/2*d1^-eta)*(randn(1,N)+1i*randn(1,N));
 h2 = sqrt(1/2*d2^-eta)*(randn(1,N)+1i*randn(1,N));
@@ -24,7 +24,7 @@ pt = (10^-3)*10.^(Pt/10);
 % BW = 10^6;                  %System bandwidth
 % No = -174 + 10*log10(BW);   %Noise power (dBm)
 % no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
-No = -100;
+No = -80;
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
 % # of channel use (blocklength)
@@ -64,18 +64,9 @@ throughput_1 = zeros(length(tx_times), length(Pt),length(Delay_related));
 for u=1:length(Pt)
     rho = pt(u)/ no;
     for tt = 1:length(tx_times)
-        sub_M = M / tt;
-        inc_M = M / tt;
+        sub_M = M;
+        inc_M = M;
         for mm = 1:tt
-            % Common term
-%             w1 = 2^(N1 / sub_M)-1;
-%             w2 = 2^(N2 / sub_M)-1;
-            % Calculate BLER
-%             epsilon2(tt,mm+1,u) = w2/(lambda2*rho*(alpha2-alpha1*w2));
-%             epsilon12(tt,mm+1,u) = w2/(lambda1*rho*(alpha2-alpha1*w2));
-%             epsilon11(tt,mm+1,u) = w1/(lambda1*rho*alpha1);
-%             epsilon1(tt,mm+1,u) = ...
-%                 epsilon12(tt,mm+1,u) + epsilon11(tt,mm+1,u);
             % Q-function w/ NO approximation
             % Received SINR
             gamma2 = (alpha2*pt(u).*abs(h2).^2)./(alpha1*pt(u).*abs(h2).^2+no);
@@ -109,10 +100,10 @@ for u=1:length(Pt)
             T_cu_2(tt,u,:) = M*epsilon2(tt,1,u);
             T_cu_1(tt,u,:) = M*epsilon1(tt,1,u);
         else
-        T_cu_2(tt,u,:) = sum(inc_M*epsilon2(tt,1:tt,u))+...
-                                Delay.*sum(epsilon2(tt,1:tt,u));
-        T_cu_1(tt,u,:) = sum(inc_M*epsilon1(tt,1:tt,u))+...
-                                Delay.*sum(epsilon1(tt,1:tt,u));  
+            T_cu_2(tt,u,:) = sum(inc_M*epsilon2(tt,1:tt,u))+...
+                                    Delay.*sum(epsilon2(tt,1:tt,u));
+            T_cu_1(tt,u,:) = sum(inc_M*epsilon1(tt,1:tt,u))+...
+                                    Delay.*sum(epsilon1(tt,1:tt,u));  
         end
         N_expected_2(tt,u) = N2*(1-epsilon2(tt,mm+1,u));
         N_expected_1(tt,u) = N1*(1-epsilon1(tt,mm+1,u));     
@@ -131,7 +122,7 @@ plot(Pt, throughput_2(1,:,3),'*b');
 plot(Pt, throughput_2(2,:,1),'r');
 plot(Pt, throughput_2(2,:,2),'or');
 plot(Pt, throughput_2(2,:,3),'*r');
-
+ 
 % plot(Pt, throughput_2(3,:,1),'g');
 % plot(Pt, throughput_2(3,:,2),'og');
 % plot(Pt, throughput_2(3,:,3),'*g');
@@ -158,3 +149,37 @@ xlabel('Transmitted power (dBm)');
 ylabel('Throughput (bpcu)');
 
 set(gca, 'FontName', 'Times New Roman');
+
+
+figure (3)
+plot(Pt, T_cu_2(1,:,1),'b');
+hold on; grid on;
+plot(Pt, T_cu_2(1,:,2),'ob');
+plot(Pt, T_cu_2(1,:,3),'*b');
+
+plot(Pt, T_cu_2(2,:,1),'r');
+plot(Pt, T_cu_2(2,:,2),'or');
+plot(Pt, T_cu_2(2,:,3),'*r');
+
+xlabel('Transmitted power (dBm)');
+ylabel('Expected delay (cu)');
+set(gca, 'FontName', 'Times New Roman');
+
+
+figure (4)
+plot(Pt, T_cu_1(1,:,1),'b');
+hold on; grid on;
+plot(Pt, T_cu_1(1,:,2),'ob');
+plot(Pt, T_cu_1(1,:,3),'*b');
+
+plot(Pt, T_cu_1(2,:,1),'r');
+plot(Pt, T_cu_1(2,:,2),'or');
+plot(Pt, T_cu_1(2,:,3),'*r');
+
+xlabel('Transmitted power (dBm)');
+ylabel('Expected delay (cu)');
+set(gca, 'FontName', 'Times New Roman');
+
+
+
+
