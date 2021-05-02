@@ -57,23 +57,36 @@ sum_En_HAP_opt_M_j = zeros(NNN,length(Pt));
 sum_OMA_opt_M_j = zeros(NNN,length(Pt));
 
 
-EP_opt_M = zeros(K,length(Pt));
-RP_opt_M = zeros(K,length(Pt));
-UPG_opt_M = zeros(K,length(Pt));
-NULPA_opt_M = zeros(K, length(Pt));
-HAP_opt_M = zeros(K, length(Pt));
-SAP_opt_M = zeros(K, length(Pt));
-En_UPG_opt_M = zeros(K,length(Pt));
-En_HAP_opt_M = zeros(K, length(Pt));
+EP_opt_M_j = zeros(NNN,K,length(Pt));
+RP_opt_M_j = zeros(NNN,K,length(Pt));
+UPG_opt_M_j = zeros(NNN,K,length(Pt));
+NULPA_opt_M_j = zeros(NNN,K, length(Pt));
+HAP_opt_M_j = zeros(NNN,K, length(Pt));
+SAP_opt_M_j = zeros(NNN,K, length(Pt));
+En_UPG_opt_M_j = zeros(NNN,K,length(Pt));
+En_HAP_opt_M_j = zeros(NNN,K, length(Pt));
+OMA_opt_M_j = zeros(NNN,2*K,length(Pt));
 
 
 % Near users have strict target BLER
 % target_BLER = [1e-5 1e-5 1e-5 1e-5 1e-5 ...
 %                1e-4 1e-4 1e-4 1e-4 1e-4];
 
+target_BLER = [1e-7 1e-7 1e-7 1e-7 1e-7 ...
+               1e-4 1e-4 1e-4 1e-4 1e-4];
+
+% target_BLER = [1e-8 1e-8 1e-8 1e-8 1e-8 ...
+%                1e-5 1e-5 1e-5 1e-5 1e-5];
+           
+% target_BLER = [1e-8 1e-8 1e-8 1e-8 ...
+%                1e-5 1e-5 1e-5 1e-5];
+
 % Far users have strict target BLER
-target_BLER = [1e-4 1e-4 1e-4 1e-4 1e-4 ...
-               1e-5 1e-5 1e-5 1e-5 1e-5];
+% target_BLER = [1e-4 1e-4 1e-4 1e-4 1e-4 ...
+%                1e-5 1e-5 1e-5 1e-5 1e-5];
+
+% target_BLER = [1e-4 1e-4 1e-4 1e-4 1e-4 ...
+%                1e-7 1e-7 1e-7 1e-7 1e-7];
 
 
 parfor u=1:length(Pt)
@@ -88,39 +101,39 @@ parfor u=1:length(Pt)
         exhaustive_pairing = user_distance(pair_idx);
         target_BLER_EP = target_BLER(pair_idx);
         
-        [sum_EP_opt_M_j(jj,u), EP_opt_M(:,u), Exhaustive_pairing(:,:,u)]=...
+        [sum_EP_opt_M_j(jj,u), EP_opt_M_j(jj,:,u), Exhaustive_pairing(:,:,u)]=...
             EP(exhaustive_pairing, NN, K, target_BLER_EP, rho(u), eta, lamda);
         
         % Random Paring (RP)
-        [sum_RP_opt_M_j(jj,u), RP_opt_M(:,u), RP_user_pairing(:,:,u)]=...
+        [sum_RP_opt_M_j(jj,u), RP_opt_M_j(jj,:,u), RP_user_pairing(:,:,u)]=...
             RP(user_distance, NN, K, target_BLER, rho(u), eta, lamda);
         
         % User Pre-Grouping
-        [sum_UPG_opt_M_j(jj,u), UPG_opt_M(:,u), User_pre_grouping(:,:,u)] =...
+        [sum_UPG_opt_M_j(jj,u), UPG_opt_M_j(jj,:,u), User_pre_grouping(:,:,u)] =...
             UPG_opt_delta(user_distance, NN, K, target_BLER, rho(u), eta, lamda);
         
         % User Pre-Grouping NLUPA
-        [sum_NLUPA_opt_M_j(jj,u), NULPA_opt_M(:,u), User_pre_grouping_NLUPA(:,:,u)] =...
+        [sum_NLUPA_opt_M_j(jj,u), NULPA_opt_M_j(jj,:,u), User_pre_grouping_NLUPA(:,:,u)] =...
             UPG_NLUPA(user_distance, NN, K, target_BLER, rho(u), eta, lamda);
         
         % Hungarian Algorithm Pairing
-        [sum_HAP_opt_M_j(jj,u), HAP_opt_M(:,u), Hungarian_pairing(:,:,u)] =...
+        [sum_HAP_opt_M_j(jj,u), HAP_opt_M_j(jj,:,u), Hungarian_pairing(:,:,u)] =...
             HAP(user_distance, NN, K, target_BLER, rho(u), eta, lamda);
         
         % Simulated Annealing Pairing (SAP)
-        [sum_SAP_opt_M_j(jj,u), SAP_opt_M(:,u), Simulated_Anealing_Pairing(:,:,u)] =...
+        [sum_SAP_opt_M_j(jj,u), SAP_opt_M_j(jj,:,u), Simulated_Anealing_Pairing(:,:,u)] =...
             SAP(user_distance, NN, K, target_BLER, rho(u), eta, lamda);
         
         % OMA 
-        [sum_OMA_opt_M_j(jj,u),~] = ...
+        [sum_OMA_opt_M_j(jj,u), OMA_opt_M_j(jj,:,u)] = ...
             OMA(user_distance, NN, K, target_BLER, rho(u), beta, OMA_PA, eta, lamda);
         
         % Enhanced Hungarian Algorithm Pairing
-        [sum_En_HAP_opt_M_j(jj,u), En_HAP_opt_M(:,u), En_Hungarian_pairing(:,:,u)] =...
+        [sum_En_HAP_opt_M_j(jj,u), En_HAP_opt_M_j(jj,:,u), En_Hungarian_pairing(:,:,u)] =...
             En_HAP(user_distance, NN, K, target_BLER, rho(u), eta, lamda);
         
         % Enhanced User Pre-Grouping
-        [sum_En_UPG_opt_M_j(jj,u), En_UPG_opt_M(:,u), En_User_pre_grouping(:,:,u)] =...
+        [sum_En_UPG_opt_M_j(jj,u), En_UPG_opt_M_j(jj,:,u), En_User_pre_grouping(:,:,u)] =...
             En_UPG_opt_delta(user_distance, NN, K, target_BLER, rho(u), eta, lamda);
           
     end
@@ -136,8 +149,26 @@ sum_SAP_opt_M = mean(sum_SAP_opt_M_j);
 sum_En_UPG_opt_M = mean(sum_En_UPG_opt_M_j);
 sum_En_HAP_opt_M = mean(sum_En_HAP_opt_M_j);
 
-
 sum_OMA_opt_M = mean(sum_OMA_opt_M_j);
+
+% std_EP_opt_M = std(sum_EP_opt_M_j)
+% std_RP_opt_M = std(sum_RP_opt_M_j)
+% std_UPG_opt_M = std(sum_UPG_opt_M_j)
+% std_NLUPA_opt_M = std(sum_NLUPA_opt_M_j)
+% std_HAP_opt_M = std(sum_HAP_opt_M_j)
+% std_SAP_opt_M =std(sum_SAP_opt_M_j) 
+% std_En_UPG_opt_M = std(sum_En_UPG_opt_M_j)
+% std_En_HAP_opt_M = std(sum_En_HAP_opt_M_j)
+
+EP_opt_M = mean(EP_opt_M_j);
+RP_opt_M = mean(RP_opt_M_j);
+UPG_opt_M = mean(UPG_opt_M_j);
+NULPA_opt_M = mean(NULPA_opt_M_j);
+HAP_opt_M = mean(HAP_opt_M_j);
+SAP_opt_M = mean(SAP_opt_M_j);
+En_UPG_opt_M = mean(En_UPG_opt_M_j);
+En_HAP_opt_M = mean(En_HAP_opt_M_j);
+
 
 % % Save variable
 % path_str = ['C:\Users\eric7\Desktop\WeiJie\Thesis\Thesis Result\UPdata_0218'];
@@ -164,10 +195,10 @@ plot(Pt,sum_OMA_opt_M,'c');
 
 xlabel('Transmitted power (dBm)');
 ylabel('Blocklength (Channel use)');
-legend('Random Pairing','User Pre-Grouping', 'User Pre-Grouping NLUPA', ...
-        'Exhaustive Paring', 'Hungarian Pairing',...
-        'Simulated Annealing Pairing',...
-        'Enhanced User Pre-Grouping', 'Enhanced Hungarian Pairing',...
+legend('RP','UPG w/o Re-Grouping', 'NLUPA', ...
+        'EP', 'HAP w/o Re-Grouping',...
+        'SAP',...
+        'UPG', 'HAP',...
         'OMA');
 set(gca, 'FontName', 'Times New Roman'); 
 

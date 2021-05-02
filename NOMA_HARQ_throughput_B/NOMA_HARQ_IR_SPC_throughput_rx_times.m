@@ -33,7 +33,7 @@ alpha1 = 0.2;
 alpha2 = 1-alpha1;
 
 % # of channel use (blocklength)
-M = 1000;
+M = 200;
 tx_times = 1:20;
 
 % # of information bits
@@ -118,8 +118,8 @@ end
 figure (1)
 plot(tx_times, throughput_2(:,1),'b');
 hold on; grid on;
-plot(tx_times, throughput_2(:,2),'ob');
-plot(tx_times, throughput_2(:,3),'*b');
+plot(tx_times, throughput_2(:,2),'-ob');
+plot(tx_times, throughput_2(:,3),'-*b');
 
 plot(tx_times, throughput_1(:,1),'r');
 plot(tx_times, throughput_1(:,2),'-or');

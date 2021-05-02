@@ -65,6 +65,7 @@ SAP_opt_M = zeros(K, length(Pt));
 En_UPG_opt_M = zeros(K,length(Pt));
 En_HAP_opt_M = zeros(K, length(Pt));
 
+target_BLER_j = zeros(2*K,NNN,length(Pt));
 
 parfor u=1:length(Pt)
     for jj = 1:NNN
@@ -74,10 +75,23 @@ parfor u=1:length(Pt)
         user_distance = randi([50 500],1,2*K);
         user_distance = sort(user_distance);
         
-        % Draw target BLER between 1e-5 and 1e-4 randomly
-        target_BLER = (1e-4 - 1e-8).*rand(1,2*K) + 1e-5;
+        % Draw target BLER between 1e-8 and 1e-4 randomly
+%         target_BLER = (1e-4 - 1e-8).*rand(1,2*K) + 1e-8;
+        exponent = 4 + 4*rand(1, 2*K);
+        target_BLER_j(:,jj,u) = 10.^-exponent;
         
+%         exponent = 6 + 2*rand(1,K);
+%         target_BLER_n = 10.^-exponent;
+%         exponent = 4 + 2*rand(1,K);
+%         target_BLER_f = 10.^-exponent;
         
+%         exponent = 4 + 2*rand(1,5);
+%         target_BLER_n = 10.^-exponent;
+%         exponent = 6 + 2*rand(1,5);
+%         target_BLER_f = 10.^-exponent;
+        
+%         target_BLER_j(:,jj,u) = [target_BLER_n target_BLER_f];
+        target_BLER = target_BLER_j(:,jj,u);
         % Exhaustive Paring (EP)
         exhaustive_pairing = user_distance(pair_idx);
         target_BLER_EP = target_BLER(pair_idx);
@@ -158,10 +172,10 @@ plot(Pt,sum_OMA_opt_M,'c');
 
 xlabel('Transmitted power (dBm)');
 ylabel('Blocklength (Channel use)');
-legend('Random Pairing','User Pre-Grouping', 'User Pre-Grouping NLUPA', ...
-        'Exhaustive Paring', 'Hungarian Pairing',...
-        'Simulated Annealing Pairing',...
-        'Enhanced User Pre-Grouping', 'Enhanced Hungarian Pairing',...
+legend('RP','UPG w/o Re-Grouping', 'NLUPA', ...
+        'EP', 'HAP w/o Re-Grouping',...
+        'SAP',...
+        'UPG', 'HAP',...
         'OMA');
 set(gca, 'FontName', 'Times New Roman'); 
 

@@ -5,11 +5,11 @@ NN = 256; % number of information bit
 N1 = NN;
 N2 = NN;
 
-NNN = 1000; % number of Monte Carlo
+NNN = 10000; % number of Monte Carlo
 
 eplsion1R = 10^-5;
 eplsion2R = 10^-4;
-delta = 1/2;
+
 
 Pt = 30;                    %Transmit Power in dBm
 pt = (10^-3)*db2pow(Pt);    %Transmit Power (linear scale)
@@ -46,7 +46,9 @@ parfor u=1:length(ncluster)
 
         K = ncluster(u);
         user_distance = randi([50 300],1,2*K);
-        target_BLER = (1e-4 - 1e-5).*rand(1,2*K) + 1e-5;
+%         target_BLER = (1e-4 - 1e-5).*rand(1,2*K) + 1e-5;
+        exponent = 4 + 4*rand(1, 2*K);
+        target_BLER = 10.^-exponent;
 %         if u == 1
 %             user_distance = randi([10 330],1,2*K);
 %         else
@@ -102,7 +104,7 @@ sum_SAP_opt_M = mean(sum_SAP_opt_M_j);
 sum_En_UPG_opt_M = mean(sum_En_UPG_opt_M_j);
 sum_En_HAP_opt_M = mean(sum_En_HAP_opt_M_j);
 
-total_resource = 35000;
+total_resource = 1.5e7;
 
 RP_CDF = min(sum_RP_opt_M/total_resource,1);
 UPG_CDF = min(sum_UPG_opt_M/total_resource,1);
@@ -152,9 +154,9 @@ plot(10:2:40, En_HAP_CDF, '--g');
 
 xlabel('Number of User');
 ylabel('CDF');
-legend('Random Pairing', 'User Pre-Grouping', 'User Pre-Grouping NLUPA',...
-    'Hungarian Algorithm Pairing', 'Simulated Annealing Pairing', 'OMA',...
-    'Enhanced User Pre-Grouping','Enhanced Hungarian Algorithm Pairing');
+legend('RP', 'UPG w/o Re-Grouping ', 'NLUPA',...
+    'HAP w/o Re-Grouping', 'SAP', 'OMA',...
+    'UPG','HAP');
 
 set(gca, 'FontName', 'Times New Roman');
 

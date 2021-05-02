@@ -11,7 +11,7 @@ d1 = 100;
 d2 = 200;
 
 % Transmit power in dBm
-Pt = 10;                
+Pt = 30;                
 % Transmit power in linear scale
 pt = (10^-3)*10.^(Pt/10);
 
@@ -145,5 +145,27 @@ ylabel('Throughput (bpcu)');
 set(gca, 'FontName', 'Times New Roman');
 
 
+figure (3)
+plot(M,reshape(epsilon2(2,1,:),1,length(M)),'r');
+hold on; grid on;
+plot(M,reshape(epsilon2(2,2,:),1,length(M)),'-or');
+plot(M,reshape(epsilon2(2,3,:),1,length(M)),'-*r');
 
+plot(M,reshape(epsilon2(1,2,:),1,length(M)),'b');
+
+xlabel('Blocklength (channel use)');
+ylabel('BLER');
+set(gca, 'FontName', 'Times New Roman');
+
+figure (4)
+plot(M,reshape(epsilon1(2,1,:),1,length(M)),'r');
+hold on; grid on;
+plot(M,reshape(epsilon1(2,2,:),1,length(M)),'-or');
+plot(M,reshape(epsilon1(2,3,:),1,length(M)),'-*r');
+
+plot(M,reshape(epsilon1(1,2,:),1,length(M)),'b');
+
+xlabel('Blocklength (channel use)');
+ylabel('BLER');
+set(gca, 'FontName', 'Times New Roman');
 

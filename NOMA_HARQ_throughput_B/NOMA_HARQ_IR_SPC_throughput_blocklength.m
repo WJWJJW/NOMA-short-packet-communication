@@ -144,6 +144,26 @@ ylabel('Throughput (bpcu)');
 
 set(gca, 'FontName', 'Times New Roman');
 
+figure (3)
+plot(M,reshape(epsilon2(2,2,:),1,length(M)),'-or');
+hold on; grid on;
+plot(M,reshape(epsilon2(2,3,:),1,length(M)),'-*r');
 
+plot(M,reshape(epsilon2(1,2,:),1,length(M)),'b');
+
+xlabel('Blocklength (channel use)');
+ylabel('BLER');
+set(gca, 'FontName', 'Times New Roman');
+
+figure (4)
+plot(M,reshape(epsilon1(2,2,:),1,length(M)),'-or');
+hold on; grid on;
+plot(M,reshape(epsilon1(2,3,:),1,length(M)),'-*r');
+
+plot(M,reshape(epsilon1(1,2,:),1,length(M)),'b');
+
+xlabel('Blocklength (channel use)');
+ylabel('BLER');
+set(gca, 'FontName', 'Times New Roman');
 
 

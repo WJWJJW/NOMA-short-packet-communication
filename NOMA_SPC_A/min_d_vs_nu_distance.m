@@ -1,4 +1,4 @@
-
+clc; clear variables; close all;
 % Transmitted Power
 Pt = 20:10:30;               %Transmit Power in dBm
 pt = (10^-3).*db2pow(Pt);    %Transmit Power (linear scale)
@@ -55,4 +55,27 @@ legend('\epsilon_i = 10^{-5}, \epsilon_j = 10^{-4}',...
        '\epsilon_i = 10^{-4}, \epsilon_j = 10^{-4}',...
        '\epsilon_i = 10^{-4}, \epsilon_j = 10^{-5}');
 set(gca, 'FontName', 'Times New Roman'); 
+
+
+figure(2)
+plot(user_distance, d_min(1,:,1)-user_distance,'b');
+hold on;grid on;
+plot(user_distance, d_min(2,:,1)-user_distance,'r');
+plot(user_distance, d_min(3,:,1)-user_distance,'g');
+plot(user_distance, d_min(4,:,1)-user_distance,'c');
+
+plot(user_distance, d_min(1,:,2)-user_distance,'--b');
+plot(user_distance, d_min(2,:,2)-user_distance,'--r');
+plot(user_distance, d_min(3,:,2)-user_distance,'--g');
+plot(user_distance, d_min(4,:,2)-user_distance,'--c');
+
+xlabel('NU distance');
+ylabel('Min. distance for FU');
+legend('\epsilon_i = 10^{-5}, \epsilon_j = 10^{-4}',...
+       '\epsilon_i = 10^{-5}, \epsilon_j = 10^{-5}',...
+       '\epsilon_i = 10^{-4}, \epsilon_j = 10^{-4}',...
+       '\epsilon_i = 10^{-4}, \epsilon_j = 10^{-5}');
+set(gca, 'FontName', 'Times New Roman'); 
+
+
 

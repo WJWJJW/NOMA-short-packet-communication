@@ -145,3 +145,25 @@ xlabel('Tx times');
 ylabel('Expected delay (cu)');
 set(gca, 'FontName', 'Times New Roman');
 
+% figure (3)
+% plot(tx_times,reshape(epsilon2(2,2,:),1,length(d2)),'-or');
+% hold on; grid on;
+% plot(tx_times,reshape(epsilon2(2,3,:),1,length(d2)),'-*r');
+% 
+% plot(tx_times,reshape(epsilon2(1,2,:),1,length(d2)),'b');
+% 
+% xlabel('Distance (m)');
+% ylabel('BLER');
+% set(gca, 'FontName', 'Times New Roman');
+% 
+% figure (4)
+% plot(tx_times,reshape(epsilon1(2,2,:),1,length(d2)),'-or');
+% hold on; grid on;
+% plot(tx_times,reshape(epsilon1(2,3,:),1,length(d2)),'-*r');
+% 
+% plot(tx_times,reshape(epsilon1(1,2,:),1,length(d2)),'b');
+% 
+% xlabel('Distance (m)');
+% ylabel('BLER');
+% set(gca, 'FontName', 'Times New Roman');
+

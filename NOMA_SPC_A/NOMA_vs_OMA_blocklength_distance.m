@@ -148,3 +148,12 @@ xlabel('Distance of far user (meter)');
 
 set(gca, 'FontName', 'Times New Roman');
 
+figure(2)
+
+plot(d2, opt_M, 'b');
+hold on; grid on;
+plot(d2, OMA_opt_M, 'r');
+plot(d2, OMA_opt_M1, 'g');
+plot(d2, OMA_opt_M2, 'm');
+
+ylabel('Blocklength (Channel uses)');

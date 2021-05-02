@@ -134,3 +134,25 @@ xlabel('Distance (m)');
 ylabel('Throughput (bpcu)');
 
 set(gca, 'FontName', 'Times New Roman');
+
+figure (3)
+plot(d2,reshape(epsilon2(2,2,:),1,length(d2)),'-or');
+hold on; grid on;
+plot(d2,reshape(epsilon2(2,3,:),1,length(d2)),'-*r');
+
+plot(d2,reshape(epsilon2(1,2,:),1,length(d2)),'b');
+
+xlabel('Distance (m)');
+ylabel('BLER');
+set(gca, 'FontName', 'Times New Roman');
+
+figure (4)
+plot(d2,reshape(epsilon1(2,2,:),1,length(d2)),'-or');
+hold on; grid on;
+plot(d2,reshape(epsilon1(2,3,:),1,length(d2)),'-*r');
+
+plot(d2,reshape(epsilon1(1,2,:),1,length(d2)),'b');
+
+xlabel('Distance (m)');
+ylabel('BLER');
+set(gca, 'FontName', 'Times New Roman');
