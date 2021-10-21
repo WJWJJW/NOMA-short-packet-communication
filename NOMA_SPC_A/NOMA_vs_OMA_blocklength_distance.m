@@ -35,6 +35,10 @@ check2 = zeros(length(d2),1);
 beta1 = 1/2;
 beta2 = 1-beta1;
 
+% 
+% beta1 = 1;
+% beta2 = 1;
+
 h1 = sqrt(1/2*d1^-eta)*(randn(1,N)+1i*randn(1,N));
 lamda1 = mean(abs(h1).^2);
 [delta] = delta_finder (lamda1*rho*eplsion1R);
@@ -124,17 +128,17 @@ term2 = log(1+((-1+sqrt(1+4*delta^2*rho*lamda1*eplsion1R*(1-delta))) / (2*delta)
 d2_min_thred = ((exp((term1*term2)/((term1-term2)*beta2))-1) / (eplsion2R*rho2))^(-1/eta)
 
 
-plot(d2, opt_M, 'b');
+plot(d2, opt_M, 'b','linewidth',1.5);
 hold on; grid on;
-plot(d2, OMA_opt_M, 'r');
+plot(d2, OMA_opt_M, 'r','linewidth',1.5);
 
 ylabel('Blocklength (Channel uses)');
 
 
-legend('NOMA: Blocklength by Eq.(36)','OMA: Blocklength by Sum of Eq.(42)');
+legend('NOMA: Blocklength by (6.7) or (6.12)','OMA: Blocklength by Sum of (6.14)');
     
 % xline(double(D2_sol1(2)),'-','Threshold1');
-xx = xline(double(D2_sol2(2)),'-.','Bound (38)','HandleVisibility','off');
+xx = xline(double(D2_sol2(2)),'-.','Bound (6.9)','HandleVisibility','off');
 xx.FontName = 'Times New Roman';
 
 % xline(double(min_d2),'-.','Bound1');
@@ -150,10 +154,26 @@ set(gca, 'FontName', 'Times New Roman');
 
 figure(2)
 
-plot(d2, opt_M, 'b');
+plot(d2, opt_M, 'b','linewidth',1.5);
 hold on; grid on;
-plot(d2, OMA_opt_M, 'r');
-plot(d2, OMA_opt_M1, 'g');
-plot(d2, OMA_opt_M2, 'm');
+plot(d2, OMA_opt_M, 'r','linewidth',1.5);
+plot(d2, OMA_opt_M1, 'g','linewidth',1.5);
+plot(d2, OMA_opt_M2, 'm','linewidth',1.5);
 
+xx = xline(double(D2_sol2(2)),'-.','Bound (6.9)','HandleVisibility','off');
+xx.FontName = 'Times New Roman';
+
+% xline(double(min_d2),'-.','Bound1');
+% xline(double(min_d22),'-.','Bound2');
+
+
+% xline(double(D2_sol1(2)),'-','D2 asym');
+xxx = xline(d2_min_thred,'-','Performance Bound by Thm. 4','HandleVisibility','off');
+xxx.FontName = 'Times New Roman';
+
+legend('NOMA: Blocklength by (6.7) or (6.12)','OMA: Blocklength by Sum of (6.14)','OMA near user', 'OMA far user');
+
+xlabel('Distance of far user (meter)');
 ylabel('Blocklength (Channel uses)');
+
+set(gca, 'FontName', 'Times New Roman');

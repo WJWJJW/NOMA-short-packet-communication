@@ -165,9 +165,9 @@ y = [0.2 0.5];
 an3 = annotation('textarrow',x,y,'String','T=3');
 an3.FontName = 'Times New Roman';
 
-cn1 = annotation('ellipse',[.84 .68 .05 .05])
-cn2 = annotation('ellipse',[.84 .68 .05 .05])
-cn3 = annotation('ellipse',[.84 .68 .05 .05])
+cn1 = annotation('ellipse',[.84 .68 .05 .05]);
+cn2 = annotation('ellipse',[.84 .68 .05 .05]);
+cn3 = annotation('ellipse',[.84 .68 .05 .05]);
 
 dim = [0.15 0.5 0.005 0.01];
 str = {'Line : Simulation',...

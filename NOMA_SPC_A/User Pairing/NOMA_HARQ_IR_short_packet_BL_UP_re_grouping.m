@@ -5,7 +5,7 @@ NN = 256; % number of information bit
 N1 = NN;
 N2 = NN;
 
-NNN = 1000; % number of Monte Carlo
+NNN = 10000; % number of Monte Carlo
 
 Pt = 30;                    %Transmit Power in dBm
 pt = (10^-3)*db2pow(Pt);    %Transmit Power (linear scale)
@@ -90,7 +90,7 @@ w_UPG_opt_M = mean(w_UPG_opt_M_j);
 % 
 % set(gca, 'FontName', 'Times New Roman');
 
-ret = [sum_En_HAP_opt_M;sum_En_UPG_opt_M;w_UPG_opt_M;middle_UPG_opt_M;sum_OMA_opt_M];
+ret = [sum_En_HAP_opt_M;sum_En_UPG_opt_M;w_UPG_opt_M;sum_OMA_opt_M];
 figure (1)
 bar(ncluster, ret');
 

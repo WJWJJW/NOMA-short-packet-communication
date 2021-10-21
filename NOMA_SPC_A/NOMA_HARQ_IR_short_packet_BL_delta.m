@@ -1,11 +1,11 @@
 clc; clear variables; close all;
 
 N = 1e6; % number of channel tap
-K = 5;  % number of cluster (number of user  = 2K)
 NN = 256; % number of information bit
 N1 = NN;
 N2 = NN;
 
+% Target BLER
 eplsion1R = 10^-5;
 eplsion2R = 10^-4;
 

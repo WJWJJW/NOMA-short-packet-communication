@@ -1,5 +1,6 @@
     % Enhanced User Pre-Grouping optimal delta (UPG_opt_delta)
-function [sum_opt_M, opt_M, User_pre_grouping] = En_UPG_opt_delta(user_distance, N, K, target_BLER, rho, eta, lamda)
+function [sum_opt_M, opt_M, User_pre_grouping, UPG_idx] = En_UPG_opt_delta(user_distance, N, K, target_BLER, rho, eta, lamda)
+
     user_idx = 1:2*K;
     UPG_idx = zeros(K,2);
 %     NU = zeros(K,1);
@@ -15,7 +16,6 @@ function [sum_opt_M, opt_M, User_pre_grouping] = En_UPG_opt_delta(user_distance,
             re_pairing_idx_check(ii) = 1;
         end
     end
-
     % Regrouping Process
     if size(re_pairing_idx_check(re_pairing_idx_check == 1),1) == 1
         re_pairing_idx_check(1) = 1;

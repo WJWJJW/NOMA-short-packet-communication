@@ -29,7 +29,7 @@ no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
 % # of channel use (blocklength)
 tx_times = 1:3;
-M = 400;
+M = 1500;
 
 % # of information bits
 N1 = 256;
@@ -166,134 +166,180 @@ for u=1:length(Pt)
 end
 
 figure (1)
-plot(Pt, throughput_2(1,:,1),'b');
+plot(Pt, T_cu_2(1,:,1),'b', 'linewidth', 1.5);
 hold on; grid on;
-plot(Pt, throughput_2(3,:,1),'r');
-plot(Pt, cc_throughput_2(3,:,1),'g');
+plot(Pt, T_cu_2(3,:,3),'r', 'linewidth', 1.5);
+plot(Pt, cc_T_cu_2(3,:,3),'g', 'linewidth', 1.5);
 
-plot(Pt, throughput_2(1,:,2),'ob');
-plot(Pt, throughput_2(1,:,3),'*b');
-
-
-plot(Pt, throughput_2(3,:,2),'or');
-plot(Pt, throughput_2(3,:,3),'*r');
-
-
-plot(Pt, cc_throughput_2(3,:,2),'og');
-plot(Pt, cc_throughput_2(3,:,3),'*g');
+plot(Pt, T_cu_1(1,:,1),'-ob', 'linewidth', 1.5);
+plot(Pt, T_cu_1(3,:,3),'-or', 'linewidth', 1.5);
+plot(Pt, cc_T_cu_1(3,:,3),'-og', 'linewidth', 1.5);
 
 xlabel('Transmitted power (dBm)');
-ylabel('Throughput (bpcu)');
-legend('One-shot','HARQ-IR','HARQ-CC');
+ylabel('Expected delay (cu)');
+legend('Far user w/o HARQ','Far user w/ HARQ-IR','Far user w/ HARQ-CC',...
+       'Near user w/o HARQ','Near user w/ HARQ-IR','Near user w/ HARQ-CC');
 set(gca, 'FontName', 'Times New Roman');
-
-
 
 figure (2)
-plot(Pt, throughput_1(1,:,1),'b');
+semilogy(Pt,reshape(epsilon2(1,2,:),1,length(Pt)),'b');
 hold on; grid on;
-plot(Pt, throughput_1(3,:,1),'r');
-plot(Pt, cc_throughput_1(3,:,1),'g');
 
+semilogy(Pt,reshape(epsilon2(3,3,:),1,length(Pt)),'-sb');
+semilogy(Pt,reshape(epsilon2(3,4,:),1,length(Pt)),'-*b');
 
-plot(Pt, throughput_1(1,:,2),'ob');
-plot(Pt, throughput_1(1,:,3),'*b');
+semilogy(Pt,reshape(cc_epsilon2(3,3,:),1,length(Pt)),'-ob');
+semilogy(Pt,reshape(cc_epsilon2(3,4,:),1,length(Pt)),':ob');
 
+semilogy(Pt,reshape(epsilon1(1,2,:),1,length(Pt)),'r');
 
-plot(Pt, throughput_1(3,:,2),'or');
-plot(Pt, throughput_1(3,:,3),'*r');
+semilogy(Pt,reshape(epsilon1(3,3,:),1,length(Pt)),'-sr');
+semilogy(Pt,reshape(epsilon1(3,4,:),1,length(Pt)),'-*r');
 
-
-plot(Pt, cc_throughput_1(3,:,2),'og');
-plot(Pt, cc_throughput_1(3,:,3),'*g');
-
-xlabel('Transmitted power (dBm)');
-ylabel('Throughput (bpcu)');
-legend('One-shot','HARQ-IR','HARQ-CC');
-set(gca, 'FontName', 'Times New Roman');
-
-
-figure (3)
-plot(Pt, T_cu_2(1,:,1),'b');
-hold on; grid on;
-plot(Pt, T_cu_2(3,:,1),'r');
-plot(Pt, cc_T_cu_2(3,:,1),'g');
-
-
-plot(Pt, T_cu_2(1,:,2),'ob');
-plot(Pt, T_cu_2(1,:,3),'*b');
-
-
-plot(Pt, T_cu_2(3,:,2),'or');
-plot(Pt, T_cu_2(3,:,3),'*r');
-
-
-plot(Pt, cc_T_cu_2(3,:,2),'og');
-plot(Pt, cc_T_cu_2(3,:,3),'*g');
-
-xlabel('Transmitted power (dBm)');
-ylabel('Expected delay (cu)');
-legend('One-shot','HARQ-IR','HARQ-CC');
-set(gca, 'FontName', 'Times New Roman');
-
-
-figure (4)
-plot(Pt, T_cu_1(1,:,1),'b');
-hold on; grid on;
-plot(Pt, T_cu_1(3,:,1),'r');
-plot(Pt, cc_T_cu_1(3,:,1),'g');
-
-
-plot(Pt, T_cu_1(1,:,2),'ob');
-plot(Pt, T_cu_1(1,:,3),'*b');
-
-
-plot(Pt, T_cu_1(3,:,2),'or');
-plot(Pt, T_cu_1(3,:,3),'*r');
-
-
-plot(Pt, cc_T_cu_1(3,:,2),'og');
-plot(Pt, cc_T_cu_1(3,:,3),'*g');
-
-xlabel('Transmitted power (dBm)');
-ylabel('Expected delay (cu)');
-legend('One-shot','HARQ-IR','HARQ-CC');
-set(gca, 'FontName', 'Times New Roman');
-
-figure (5)
-plot(Pt,reshape(epsilon2(1,2,:),1,length(Pt)),'b');
-hold on; grid on;
-plot(Pt,reshape(epsilon2(3,2,:),1,length(Pt)),'r');
-plot(Pt,reshape(cc_epsilon2(3,2,:),1,length(Pt)),'--g');
-
-
-plot(Pt,reshape(epsilon2(3,3,:),1,length(Pt)),'-or');
-plot(Pt,reshape(epsilon2(3,4,:),1,length(Pt)),'*r');
-
-
-plot(Pt,reshape(cc_epsilon2(3,3,:),1,length(Pt)),'-og');
-plot(Pt,reshape(cc_epsilon2(3,4,:),1,length(Pt)),'-*g');
+semilogy(Pt,reshape(cc_epsilon1(3,3,:),1,length(Pt)),'-or');
+semilogy(Pt,reshape(cc_epsilon1(3,4,:),1,length(Pt)),':or');
 
 
 xlabel('Transmitted power (dBm)');
 ylabel('BLER');
-legend('One-shot','HARQ-IR','HARQ-CC');
+legend('Far user w/o HARQ','Far user w/ HARQ-IR, t=2','Far user w/ HARQ-IR, t=3',...
+       'Far user w/ HARQ-CC, t=2','Far user w/ HARQ-CC, t=3',...
+       'Near user w/o HARQ','Near user w/ HARQ-IR, t=2','Near user w/ HARQ-IR, t=3',...
+       'Near user w/ HARQ-CC, t=2','Near user w/ HARQ-CC, t=3');
 set(gca, 'FontName', 'Times New Roman');
 
-figure (6)
-plot(Pt,reshape(epsilon1(1,2,:),1,length(Pt)),'b');
-hold on; grid on;
-plot(Pt,reshape(epsilon1(3,2,:),1,length(Pt)),'r');
-plot(Pt,reshape(cc_epsilon1(3,2,:),1,length(Pt)),'--g');
-
-plot(Pt,reshape(epsilon1(3,3,:),1,length(Pt)),'-or');
-plot(Pt,reshape(epsilon1(3,4,:),1,length(Pt)),'*r');
-
-plot(Pt,reshape(cc_epsilon1(3,3,:),1,length(Pt)),'-og');
-plot(Pt,reshape(cc_epsilon1(3,4,:),1,length(Pt)),'-*g');
 
 
-xlabel('Transmitted power (dBm)');
-ylabel('BLER');
-legend('One-shot','HARQ-IR','HARQ-CC');
-set(gca, 'FontName', 'Times New Roman');
+
+% figure (1)
+% plot(Pt, throughput_2(1,:,1),'b');
+% hold on; grid on;
+% plot(Pt, throughput_2(3,:,1),'r');
+% plot(Pt, cc_throughput_2(3,:,1),'g');
+% 
+% plot(Pt, throughput_2(1,:,2),'ob');
+% plot(Pt, throughput_2(1,:,3),'*b');
+% 
+% 
+% plot(Pt, throughput_2(3,:,2),'or');
+% plot(Pt, throughput_2(3,:,3),'*r');
+% 
+% 
+% plot(Pt, cc_throughput_2(3,:,2),'og');
+% plot(Pt, cc_throughput_2(3,:,3),'*g');
+% 
+% xlabel('Transmitted power (dBm)');
+% ylabel('Throughput (bpcu)');
+% legend('One-shot','HARQ-IR','HARQ-CC');
+% set(gca, 'FontName', 'Times New Roman');
+% 
+% 
+% 
+% figure (2)
+% plot(Pt, throughput_1(1,:,1),'b');
+% hold on; grid on;
+% plot(Pt, throughput_1(3,:,1),'r');
+% plot(Pt, cc_throughput_1(3,:,1),'g');
+% 
+% 
+% plot(Pt, throughput_1(1,:,2),'ob');
+% plot(Pt, throughput_1(1,:,3),'*b');
+% 
+% 
+% plot(Pt, throughput_1(3,:,2),'or');
+% plot(Pt, throughput_1(3,:,3),'*r');
+% 
+% 
+% plot(Pt, cc_throughput_1(3,:,2),'og');
+% plot(Pt, cc_throughput_1(3,:,3),'*g');
+% 
+% xlabel('Transmitted power (dBm)');
+% ylabel('Throughput (bpcu)');
+% legend('One-shot','HARQ-IR','HARQ-CC');
+% set(gca, 'FontName', 'Times New Roman');
+% 
+% 
+% figure (3)
+% plot(Pt, T_cu_2(1,:,1),'b');
+% hold on; grid on;
+% plot(Pt, T_cu_2(3,:,1),'r');
+% plot(Pt, cc_T_cu_2(3,:,1),'g');
+% 
+% 
+% plot(Pt, T_cu_2(1,:,2),'ob');
+% plot(Pt, T_cu_2(1,:,3),'*b');
+% 
+% 
+% plot(Pt, T_cu_2(3,:,2),'or');
+% plot(Pt, T_cu_2(3,:,3),'*r');
+% 
+% 
+% plot(Pt, cc_T_cu_2(3,:,2),'og');
+% plot(Pt, cc_T_cu_2(3,:,3),'*g');
+% 
+% xlabel('Transmitted power (dBm)');
+% ylabel('Expected delay (cu)');
+% legend('One-shot','HARQ-IR','HARQ-CC');
+% set(gca, 'FontName', 'Times New Roman');
+% 
+% 
+% figure (4)
+% plot(Pt, T_cu_1(1,:,1),'b');
+% hold on; grid on;
+% plot(Pt, T_cu_1(3,:,1),'r');
+% plot(Pt, cc_T_cu_1(3,:,1),'g');
+% 
+% 
+% plot(Pt, T_cu_1(1,:,2),'ob');
+% plot(Pt, T_cu_1(1,:,3),'*b');
+% 
+% 
+% plot(Pt, T_cu_1(3,:,2),'or');
+% plot(Pt, T_cu_1(3,:,3),'*r');
+% 
+% 
+% plot(Pt, cc_T_cu_1(3,:,2),'og');
+% plot(Pt, cc_T_cu_1(3,:,3),'*g');
+% 
+% xlabel('Transmitted power (dBm)');
+% ylabel('Expected delay (cu)');
+% legend('One-shot','HARQ-IR','HARQ-CC');
+% set(gca, 'FontName', 'Times New Roman');
+% 
+% figure (5)
+% semilogy(Pt,reshape(epsilon2(1,2,:),1,length(Pt)),'b');
+% hold on; grid on;
+% semilogy(Pt,reshape(epsilon2(3,2,:),1,length(Pt)),'r');
+% semilogy(Pt,reshape(cc_epsilon2(3,2,:),1,length(Pt)),'--g');
+% 
+% 
+% semilogy(Pt,reshape(epsilon2(3,3,:),1,length(Pt)),'-or');
+% semilogy(Pt,reshape(epsilon2(3,4,:),1,length(Pt)),'-*r');
+% 
+% 
+% semilogy(Pt,reshape(cc_epsilon2(3,3,:),1,length(Pt)),'-og');
+% semilogy(Pt,reshape(cc_epsilon2(3,4,:),1,length(Pt)),'-*g');
+% 
+% 
+% xlabel('Transmitted power (dBm)');
+% ylabel('BLER');
+% legend('One-shot','HARQ-IR','HARQ-CC');
+% set(gca, 'FontName', 'Times New Roman');
+% 
+% figure (6)
+% semilogy(Pt,reshape(epsilon1(1,2,:),1,length(Pt)),'b');
+% hold on; grid on;
+% semilogy(Pt,reshape(epsilon1(3,2,:),1,length(Pt)),'r');
+% semilogy(Pt,reshape(cc_epsilon1(3,2,:),1,length(Pt)),'--g');
+% 
+% semilogy(Pt,reshape(epsilon1(3,3,:),1,length(Pt)),'-or');
+% semilogy(Pt,reshape(epsilon1(3,4,:),1,length(Pt)),'-*r');
+% 
+% semilogy(Pt,reshape(cc_epsilon1(3,3,:),1,length(Pt)),'-og');
+% semilogy(Pt,reshape(cc_epsilon1(3,4,:),1,length(Pt)),'-*g');
+% 
+% 
+% xlabel('Transmitted power (dBm)');
+% ylabel('BLER');
+% legend('One-shot','HARQ-IR','HARQ-CC');
+% set(gca, 'FontName', 'Times New Roman');

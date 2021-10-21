@@ -72,9 +72,11 @@ for er1 = 1:length(Eplsion1R)
     end
 end
 
-D2_sol2 = zeros(length(er1),length(er2));
+D2_sol2 = zeros(length(Eplsion1R),length(Eplsion2R));
 for er1 = 1:length(Eplsion1R)
     for er2 = 1:length(Eplsion2R)
+        eplsion1R = Eplsion1R(er1);
+        eplsion2R = Eplsion2R(er2);
         syms D2
         eqn_constraint2 = (D2^-eta*eplsion2R*rho + 2)*d1^-eta*eplsion1R - (D2^-eta.*eplsion2R.*rho + 4)*D2^-eta*eplsion2R == 0;
         d2_sol2 = vpasolve(eqn_constraint2, D2);
@@ -86,7 +88,7 @@ end
 figure (1)
 subplot(2,2,1);
 yyaxis left
-plot(d2, real(opt_a1(:,1,1)),'b');
+plot(d2, real(opt_a1(:,1,1)),'b', 'linewidth',1.5);
 hold on; grid on;
 
 yline(0.5,'-','HandleVisibility','off');
@@ -95,7 +97,7 @@ ylabel('\alpha_1');
 % axis([-inf inf 0 0.5]);
 
 yyaxis right
-plot(d2, real(opt_M(:,1,1)), 'Color',[1 0.5 0]);
+plot(d2, real(opt_M(:,1,1)), 'Color',[1 0.5 0], 'linewidth',1.5);
 % set(gca, 'YTick', 120:1:125, 'YTickLabel', 120:1:125);
 hold on; grid on;
 
@@ -110,7 +112,7 @@ set(gca, 'FontName', 'Times New Roman');
 
 subplot(2,2,2);
 yyaxis left
-plot(d2, real(opt_a1(:,1,2)),'b');
+plot(d2, real(opt_a1(:,1,2)),'b', 'linewidth',1.5);
 hold on; grid on;
 
 yline(0.5,'-','HandleVisibility','off');
@@ -119,7 +121,7 @@ ylabel('\alpha_1');
 % axis([-inf inf 0 0.5]);
 
 yyaxis right
-plot(d2, real(opt_M(:,1,2)), 'Color',[1 0.5 0]);
+plot(d2, real(opt_M(:,1,2)), 'Color',[1 0.5 0], 'linewidth',1.5);
 % set(gca, 'YTick', 120:1:125, 'YTickLabel', 120:1:125);
 hold on; grid on;
 
@@ -134,7 +136,7 @@ set(gca, 'FontName', 'Times New Roman');
 
 subplot(2,2,3);
 yyaxis left
-plot(d2, real(opt_a1(:,2,1)),'b');
+plot(d2, real(opt_a1(:,2,1)),'b', 'linewidth',1.5);
 hold on; grid on;
 
 yline(0.5,'-','HandleVisibility','off');
@@ -143,7 +145,7 @@ ylabel('\alpha_1');
 % axis([-inf inf 0 0.5]);
 
 yyaxis right
-plot(d2, real(opt_M(:,2,1)), 'Color',[1 0.5 0]);
+plot(d2, real(opt_M(:,2,1)), 'Color',[1 0.5 0], 'linewidth',1.5);
 % set(gca, 'YTick', 120:1:125, 'YTickLabel', 120:1:125);
 hold on; grid on;
 
@@ -157,7 +159,7 @@ xlabel('Distance of far user (meter)');
 set(gca, 'FontName', 'Times New Roman');
 subplot(2,2,4);
 yyaxis left
-plot(d2, real(opt_a1(:,2,2)),'b');
+plot(d2, real(opt_a1(:,2,2)),'b', 'linewidth',1.5);
 hold on; grid on;
 
 yline(0.5,'-','HandleVisibility','off');
@@ -166,7 +168,7 @@ ylabel('\alpha_1');
 % axis([-inf inf 0 0.5]);
 
 yyaxis right
-plot(d2, real(opt_M(:,2,2)), 'Color',[1 0.5 0]);
+plot(d2, real(opt_M(:,2,2)), 'Color',[1 0.5 0], 'linewidth',1.5);
 % set(gca, 'YTick', 120:1:125, 'YTickLabel', 120:1:125);
 hold on; grid on;
 
@@ -178,4 +180,108 @@ legend('\alpha_1^{opt}','M_{opt}^{1 pair}');
 
 xlabel('Distance of far user (meter)');
 set(gca, 'FontName', 'Times New Roman');
+
+
+
+
+figure (2)
+yyaxis left
+plot(d2, real(opt_a1(:,1,1)),'b', 'linewidth',1.5);
+hold on; grid on;
+
+yline(0.5,'-','HandleVisibility','off');
+
+ylabel('\alpha_1');
+% axis([-inf inf 0 0.5]);
+
+yyaxis right
+plot(d2, real(opt_M(:,1,1)), 'Color',[1 0.5 0], 'linewidth',1.5);
+% set(gca, 'YTick', 120:1:125, 'YTickLabel', 120:1:125);
+hold on; grid on;
+
+ylabel('Blocklength (Channel uses)');
+legend('\alpha_1^{opt}','M_{opt}^{1 pair}','FontSize',14);
+    
+xx = xline(double(D2_sol2(1,1)),'-.','Bound (38)','HandleVisibility','off');
+xx.FontName = 'Times New Roman';
+xx.FontSize = 14;
+
+xlabel('Distance of far user (meter)');
+set(gca, 'FontName', 'Times New Roman','FontSize',16);
+
+figure (3)
+yyaxis left
+plot(d2, real(opt_a1(:,1,2)),'b', 'linewidth',1.5);
+hold on; grid on;
+
+yline(0.5,'-','HandleVisibility','off');
+
+ylabel('\alpha_1');
+% axis([-inf inf 0 0.5]);
+
+yyaxis right
+plot(d2, real(opt_M(:,1,2)), 'Color',[1 0.5 0], 'linewidth',1.5);
+% set(gca, 'YTick', 120:1:125, 'YTickLabel', 120:1:125);
+hold on; grid on;
+
+ylabel('Blocklength (Channel uses)');
+legend('\alpha_1^{opt}','M_{opt}^{1 pair}','FontSize',14);
+    
+xx = xline(double(D2_sol2(1,2)),'-.','Bound (38)','HandleVisibility','off');
+xx.FontName = 'Times New Roman';
+xx.FontSize = 14;
+
+xlabel('Distance of far user (meter)');
+set(gca, 'FontName', 'Times New Roman','FontSize',16);
+
+figure (4)
+yyaxis left
+plot(d2, real(opt_a1(:,2,1)),'b', 'linewidth',1.5);
+hold on; grid on;
+
+yline(0.5,'-','HandleVisibility','off');
+
+ylabel('\alpha_1');
+% axis([-inf inf 0 0.5]);
+
+yyaxis right
+plot(d2, real(opt_M(:,2,1)), 'Color',[1 0.5 0], 'linewidth',1.5);
+% set(gca, 'YTick', 120:1:125, 'YTickLabel', 120:1:125);
+hold on; grid on;
+
+ylabel('Blocklength (Channel uses)');
+legend('\alpha_1^{opt}','M_{opt}^{1 pair}','FontSize',14);
+    
+xx = xline(double(D2_sol2(2,1)),'-.','Bound (38)','HandleVisibility','off');
+xx.FontName = 'Times New Roman';
+xx.FontSize = 14;
+
+xlabel('Distance of far user (meter)');
+set(gca, 'FontName', 'Times New Roman','FontSize',16);
+
+figure (5)
+yyaxis left
+plot(d2, real(opt_a1(:,2,2)),'b', 'linewidth',1.5);
+hold on; grid on;
+
+yline(0.5,'-','HandleVisibility','off');
+
+ylabel('\alpha_1');
+% axis([-inf inf 0 0.5]);
+
+yyaxis right
+plot(d2, real(opt_M(:,2,2)), 'Color',[1 0.5 0], 'linewidth',1.5);
+% set(gca, 'YTick', 120:1:125, 'YTickLabel', 120:1:125);
+hold on; grid on;
+
+ylabel('Blocklength (Channel uses)');
+legend('\alpha_1^{opt}','M_{opt}^{1 pair}','FontSize',14);
+    
+xx = xline(double(D2_sol2(2,2)),'-.','Bound (38)','HandleVisibility','off');
+xx.FontName = 'Times New Roman';
+xx.FontSize = 14;
+
+xlabel('Distance of far user (meter)');
+set(gca, 'FontName', 'Times New Roman','FontSize',16);
+
 

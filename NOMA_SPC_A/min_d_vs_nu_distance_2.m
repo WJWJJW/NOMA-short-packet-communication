@@ -39,12 +39,18 @@ semilogx(target_BLER_f,d_min(1,:,2),'--b', 'linewidth', 1.5);
 semilogx(target_BLER_f,d_min(2,:,1),'r', 'linewidth', 1.5);
 semilogx(target_BLER_f,d_min(2,:,2),'--r', 'linewidth', 1.5);
 
-xlabel('Target BLER for FU, \epsilon_j^R');
-ylabel('Min. distance for FU');
-legend('\epsilon_i^R = 10^{-8}, d_i = 100',...
-       '\epsilon_i^R = 10^{-8}, d_i = 200',...
-       '\epsilon_i^R = 10^{-6}, d_i = 100',...
-       '\epsilon_i^R = 10^{-6}, d_i = 200');
+x1 = xlabel('Target BLER for FU, $\tilde{\epsilon_{j}}$');
+set(x1,'interpreter','Latex','FontSize',14);
+
+y1 = ylabel('Min. distance for FU');
+set(y1,'FontSize',14);
+
+h = legend('$\tilde{\epsilon_{i}} = 10^{-8}, d_i = 100$',...
+       '$\tilde{\epsilon_{i}} = 10^{-8}, d_i = 200$',...
+       '$\tilde{\epsilon_{i}} = 10^{-6}, d_i = 100$',...
+       '$\tilde{\epsilon_{i}} = 10^{-6}, d_i = 200$');
+set(h,'interpreter','Latex','FontSize',14);
+
 set(gca, 'FontName', 'Times New Roman'); 
 
 figure(2)
@@ -56,10 +62,11 @@ semilogx(target_BLER_f,d_min(2,:,2)-user_distance(2),'--r', 'linewidth', 1.5);
 
 xlabel('Target BLER for FU');
 ylabel('Difference between Min. distance for FU and distance of NU');
-legend('\epsilon_i^R = 10^{-8}, d_i = 100',...
-       '\epsilon_i^R = 10^{-8}, d_i = 200',...
-       '\epsilon_i^R = 10^{-6}, d_i = 100',...
-       '\epsilon_i^R = 10^{-6}, d_i = 200');
+h2 = legend('$\tilde{\epsilon_{i}} = 10^{-8}, d_i = 100$',...
+       '$\tilde{\epsilon_{i}} = 10^{-8}, d_i = 200$',...
+       '$\tilde{\epsilon_{i}} = 10^{-6}, d_i = 100$',...
+       '$\tilde{\epsilon_{i}} = 10^{-6}, d_i = 200$');
+h2.Interpreter = 'latex';
 set(gca, 'FontName', 'Times New Roman'); 
 
 

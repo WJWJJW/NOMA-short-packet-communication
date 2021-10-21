@@ -4,6 +4,8 @@
 % 2. check threshold : M1 thred and a1<1 thred
 % 3. calculate optimal blocklength and alpha1 directly (figure 1)
 % 4. plot blocklength v.s. BLER under optimal alpha1 (figure 2)
+% Not using optimal delta
+
 clc; clear variables; close all;
 N = 1e6;
 N1 = 256;

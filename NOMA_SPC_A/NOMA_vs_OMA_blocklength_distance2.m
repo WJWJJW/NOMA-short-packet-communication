@@ -1,5 +1,5 @@
 % This script analysis the relation between blocklength , power allocation
-% coefficient and user 2 distance
+% coefficient and user 2 distance under different power
 % calculate blocklength and power allocation coefficient according
 % different conditon
 

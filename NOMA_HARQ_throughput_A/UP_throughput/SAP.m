@@ -1,5 +1,5 @@
 % Simulated Annealing Pairing (SAP)
-function [sum_opt_M, opt_M, Simulated_Anealing_Pairing, iter_times]=SAP(user_distance, N, K, target_BLER, rho, eta, lamda)
+function [sum_opt_M, opt_M, Simulated_Anealing_Pairing, cur_combinition_idx]=SAP(user_distance, N, K, target_BLER, rho, eta, lamda)
     % Initialization
     Temperature = 50;
     Temperature_min = 0.0001;
@@ -17,15 +17,14 @@ function [sum_opt_M, opt_M, Simulated_Anealing_Pairing, iter_times]=SAP(user_dis
     [sum_opt_M, opt_M] = M_cal_Mod(N,RP_user_pairing, K, target_BLER_pair,rho,eta,lamda);
     
     cur_combinition_idx = RP_indices;
-          
-    iter_times = 1;
+                                    
     while 1
         % Time update
-%         cur_time = cur_time+1;
-%         % Time budget check
-%         if cur_time > Time_budget
-%             break;
-%         end
+        cur_time = cur_time+1;
+        % Time budget check
+        if cur_time > Time_budget
+            break;
+        end
         % Find neighbor
         [neighbor_1_idx, neighbor_2_idx] = neighbor_finder(cur_combinition_idx, K);
         % Choose neighbor randomly
@@ -62,7 +61,7 @@ function [sum_opt_M, opt_M, Simulated_Anealing_Pairing, iter_times]=SAP(user_dis
         if Temperature < Temperature_min
             break;
         end
-    iter_times = iter_times+1;     
+            
     end % End SAP
     Simulated_Anealing_Pairing = user_distance(cur_combinition_idx);
 end

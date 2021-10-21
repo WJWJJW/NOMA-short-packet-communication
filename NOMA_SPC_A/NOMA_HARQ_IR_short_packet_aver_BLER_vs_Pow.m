@@ -10,7 +10,7 @@ N = 1e7;
 eta = 4;
 % User distance
 d1 = 100;
-d2 = 200;
+d2 = 150;
 % Rayleigh fading channel
 h1 = sqrt(1/2*d1^-eta)*(randn(1,N)+1i*randn(1,N));
 h2 = sqrt(1/2*d2^-eta)*(randn(1,N)+1i*randn(1,N));
@@ -31,8 +31,8 @@ No = -100;
 no = (10^-3)*10.^(No/10);   %Noise power (linear scale)
 
 % # of channel use (blocklength)
-M1 = 300;
-M2 = 300;
+M1 = 873;
+M2 = 873;
 % M = 150;
 
 % # of information bits
@@ -52,7 +52,7 @@ nu_2 = w2 - (1/(2*sqrt(M2)*Xi_2));
 tau_2 = w2 + (1/(2*sqrt(M2)*Xi_2));
 
 % Power allocaitn coefficient
-alpha1 = 0.2;
+alpha1 = 0.4288;
 alpha2 = 1 - alpha1;
 %%
 
