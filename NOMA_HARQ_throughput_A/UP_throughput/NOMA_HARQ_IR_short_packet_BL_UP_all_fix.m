@@ -8,7 +8,7 @@ N1 = NN;
 N2 = NN;
 
 
-Pt = 30:2:40;               %Transmit Power in dBm
+Pt = 20:2:30;               %Transmit Power in dBm
 pt = (10^-3).*db2pow(Pt);    %Transmit Power (linear scale)
 
 % AWGN
@@ -104,6 +104,9 @@ target_BLER = [1e-6 1e-6 1e-6 1e-6 1e-6 ...
 
 % target_BLER = [1e-7 1e-7 1e-7 1e-7 1e-7 ...
 %                1e-4 1e-4 1e-4 1e-4 1e-4];
+
+% target_BLER = [1e-5 1e-5 1e-5 1e-5 1e-5 ...
+%                1e-3 1e-3 1e-3 1e-3 1e-3];
 
 % target_BLER = [1e-8 1e-8 1e-8 1e-8 1e-8 ...
 %                1e-5 1e-5 1e-5 1e-5 1e-5];

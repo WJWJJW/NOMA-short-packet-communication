@@ -101,7 +101,7 @@ for u=1:length(Pt)
         h = (randn(1,N)+1i*randn(1,N));
         lamda = mean(abs(h).^2);
         % Generate user randomly
-        user_distance = randi([50 500],1,2*K);
+        user_distance = randi([50 300],1,2*K);
         user_distance = sort(user_distance);
         
         exponent = 4 + 4*rand(1, 2*K);
